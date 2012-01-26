@@ -252,6 +252,7 @@ $(document).ready(function() {
  	  	if(ship.speed < ship.maxSpeed){ 
  	  		ship.speed += 0.5;
 				if(!muted){
+          // Need better thrusters sound.
  	  			//thrustersSound.currentTime = 0;
  	  			//thrustersSound.play();
 				}
@@ -610,7 +611,7 @@ function animateEnemy(tmpEnemy) {
 	 	else if(distance < ship.halfWidth && ship.shield == false){
 	 		bullets.removeByValue(bullet);
 			if(!muted){
-	 			//hitSound.currentTime = 0;
+	 			hitSound.currentTime = 0;
 	 			hitSound.play();
 			}
 	 		destroy(ship);
@@ -635,7 +636,7 @@ function animateEnemy(tmpEnemy) {
  	 		powerups.removeByValue(powerup);
  	 		numPowerups--;
 			if(!muted){
- 	 			//powerupSound.currentTime = 0;
+ 	 			powerupSound.currentTime = 0;
  	 			powerupSound.play();
 			}
  	 		usePowerup(ship, powerup.type);
@@ -681,7 +682,7 @@ function animateEnemy(tmpEnemy) {
  		player.energy = player.energy - 18;
  		bullets.push(new Bullet(player));
 		if(!muted){
- 			//shootSound.currentTime = 0;
+ 			shootSound.currentTime = 0;
  			shootSound.play();
 		}
  		player.charge = 0;
@@ -694,7 +695,7 @@ function animateEnemy(tmpEnemy) {
  	//console.log(player.health);
  	if(player.health == 0 && player != ship){
 		if(!muted){
- 			//destroySound.currentTime = 0;
+ 			destroySound.currentTime = 0;
  			destroySound.play();
 		}
  		enemies.removeByValue(player);
@@ -703,7 +704,7 @@ function animateEnemy(tmpEnemy) {
  	}else if(player.health == 0 && player == ship){
  		resetPlayer(player);
 		if(!muted){
- 			//destroySound.currentTime = 0;
+ 			destroySound.currentTime = 0;
  			destroySound.play();
 		}
  		score--;
