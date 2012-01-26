@@ -29,8 +29,9 @@ $(document).ready(function() {
  var canvasWidth = $(window).get(0).innerWidth;
  var canvasHeight = $(window).get(0).innerHeight;
  var refreshRate = 77;
- if(touchable) refreshRate = 35;
+ 
  var playGame = true;
+ var muted = false;
  var score = 0;
  var scoreOut = document.getElementById('score');
  var stars;
@@ -48,6 +49,8 @@ $(document).ready(function() {
  var canX;
  var canY;
  var touchable = 'ontouchstart' in window || 'createTouch' in document;
+ //if(touchable) refreshRate = 35;
+ if(touchable) muted = true;
  var touches = []; // array of touch vectors
  var rightKey = false;
  var leftKey = false;
@@ -55,8 +58,8 @@ $(document).ready(function() {
  var downKey = false;
  var space = false;
  
- var soundShoot = $("#shootSound").get(0);
- var thrustersSound = $("#thrustersSound").get(0);
+ var shootSound = $("#shootSound").get(0);
+ //var thrustersSound = $("#thrustersSound").get(0);
  var destroySound = $("#destroySound").get(0);
  var powerupSound = $("#powerupSound").get(0);
  var hitSound = $("#hitSound").get(0);
@@ -248,9 +251,9 @@ $(document).ready(function() {
  	  if (upKey){
  	  	if(ship.speed < ship.maxSpeed){ 
  	  		ship.speed += 0.5;
-				if(!touchable){
- 	  			thrustersSound.currentTime = 0;
- 	  			thrustersSound.play();
+				if(!muted){
+ 	  			//thrustersSound.currentTime = 0;
+ 	  			//thrustersSound.play();
 				}
  	  	}
  	  	ship.vy = Math.sin(ship.rotation*Math.PI/180) * ship.speed;
@@ -270,7 +273,7 @@ $(document).ready(function() {
  	  ship.x += ship.vx;
  	  ship.y += ship.vy;
 	  
-	if(!touchable){
+	if(!muted){
  		if (ship.rotation > 360) ship.rotation = 0;
  		if (ship.rotation < 0) ship.rotation = 360;
  	}
@@ -494,6 +497,8 @@ function resetPowerups(player){
 	player.powerup = false;
 	player.powerupTime = ship.resetPowerupTime;
 	player.shield = 0;
+  player.superSpeed = false;
+  player.superFire = false;
 	player.chargeRate = player.defaultChargeRate;
 	player.maxSpeed = player.defaultMaxSpeed;
 }
@@ -604,8 +609,8 @@ function animateEnemy(tmpEnemy) {
 	 	}
 	 	else if(distance < ship.halfWidth && ship.shield == false){
 	 		bullets.removeByValue(bullet);
-			if(!touchable){
-	 			hitSound.currentTime = 0;
+			if(!muted){
+	 			//hitSound.currentTime = 0;
 	 			hitSound.play();
 			}
 	 		destroy(ship);
@@ -629,8 +634,8 @@ function animateEnemy(tmpEnemy) {
  	 	if(distance < ship.width){
  	 		powerups.removeByValue(powerup);
  	 		numPowerups--;
-			if(!touchable){
- 	 			powerupSound.currentTime = 0;
+			if(!muted){
+ 	 			//powerupSound.currentTime = 0;
  	 			powerupSound.play();
 			}
  	 		usePowerup(ship, powerup.type);
@@ -675,8 +680,8 @@ function animateEnemy(tmpEnemy) {
  	if(player.energy > 0 && player.charge == 200){
  		player.energy = player.energy - 18;
  		bullets.push(new Bullet(player));
-		if(!touchable){
- 			shootSound.currentTime = 0;
+		if(!muted){
+ 			//shootSound.currentTime = 0;
  			shootSound.play();
 		}
  		player.charge = 0;
@@ -688,8 +693,8 @@ function animateEnemy(tmpEnemy) {
  	player.health = player.health - 10;
  	//console.log(player.health);
  	if(player.health == 0 && player != ship){
-		if(!touchable){
- 			destroySound.currentTime = 0;
+		if(!muted){
+ 			//destroySound.currentTime = 0;
  			destroySound.play();
 		}
  		enemies.removeByValue(player);
@@ -697,8 +702,8 @@ function animateEnemy(tmpEnemy) {
  		scoreOut.innerHTML = "Score: "+score;
  	}else if(player.health == 0 && player == ship){
  		resetPlayer(player);
-		if(!touchable){
- 			destroySound.currentTime = 0;
+		if(!muted){
+ 			//destroySound.currentTime = 0;
  			destroySound.play();
 		}
  		score--;
