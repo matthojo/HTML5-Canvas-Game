@@ -209,7 +209,7 @@ td { vertical-align: top; }
 * { margin: 0; padding: 0; }
 html, body { height: 100%; width: 100%; }
 body{
-	background-color: #252935;
+	background-color: #12141A;
 }
 canvas { display: block; }
 audio .sound{display: none;}

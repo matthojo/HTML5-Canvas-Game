@@ -215,7 +215,7 @@ $(document).ready(function() {
 	canvas.attr("height", canvasHeight);
 	
 	context.save();
-	context.fillStyle = '#252935';
+	context.fillStyle = '#12141A';
 	context.fillRect(0, 0, canvas.width(), canvas.height());
  	context.restore();
  		  
