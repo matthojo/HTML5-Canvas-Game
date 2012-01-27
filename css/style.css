@@ -1,3 +1,4 @@
+@import "iconic_fill.css";
 /*
  * HTML5 ✰ Boilerplate
  *
@@ -210,8 +211,10 @@ td { vertical-align: top; }
 html, body { height: 100%; width: 100%; }
 body{
 	background-color: #12141A;
+	overflow: hidden;
 }
-canvas { display: block; }
+canvas { display: block;
+}
 audio .sound{display: none;}
 #fps{
 	position: absolute;
@@ -220,11 +223,86 @@ audio .sound{display: none;}
 	left: 40px;
 	opacity: 0.4;
 }
-#score{
-	position: absolute;
+footer {
+	position: fixed;
+	bottom: 0;
+	left:  0;
+	width: 100%;
+	height: 40px;
+	background-color: #2b2b2b;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(43, 43, 43)), to(rgb(33, 33, 33)));
+	background-image: -webkit-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	background-image: -moz-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	background-image: -o-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	background-image: -ms-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	background-image: linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#2b2b2b', EndColorStr='#212121');
+	border-top: 1px solid #333;
+	
+	
+	
+}
+#highScore{
 	color: #FFF;
-	top: 20px;
-	right: 40px;
+	float: right;
+	height: 40px;
+	position: relative;
+	top: -50px;
+	margin-right: 20px;
+	display: block;
+}
+#score{
+	position: relative;
+	display: block;
+	color: #FFF;
+	top: -10px;
+	height: 40px;
+	width: 100px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 20px;
+	margin: 0 auto;
+	background-color: #2b2b2b;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(43, 43, 43)), to(rgb(33, 33, 33)));
+	background-image: -webkit-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	background-image: -moz-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	background-image: -o-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	background-image: -ms-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	background-image: linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#2b2b2b', EndColorStr='#212121');
+	box-shadow: 0px 0px 10px #121212;
+	padding: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border-top: 1px solid #333;
+}
+.iconic {
+display: inline-block;
+font-family: 'IconicFill';
+}
+#settings {
+	color: #FFF;
+	height: 40px;
+	position: relative;
+	top: -50px;
+	margin-left: 20px;
+	float: left;
+}
+#settings ul{
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+#settings ul li{
+	margin: 0;
+	cursor: pointer;
+}
+#toggleSound{
+	font-size: 20px;
+}
+#toggleSound.muted{
+	opacity: 0.4;
 }
 
 
@@ -248,14 +326,37 @@ audio .sound{display: none;}
    Modify as content requires.
    ========================================================================== */
 
-@media only screen and (min-width: 480px) {
-  /* Style adjustments for viewports 480px and over go here */
-
+@media only screen and (device-width: 768px) {
+  /* For general iPad layouts */
+  canvas{
+  	margin-top: 40px;
+  }
+  footer {
+  	top: 0;
+  	bottom: inherit;
+  }
 }
 
-@media only screen and (min-width: 768px) {
-  /* Style adjustments for viewports 768px and over go here */
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
+	canvas{
+		margin-top: 40px;
+	}
+	footer {
+		top: 0;
+		bottom: inherit;
+	}
+  /* For portrait layouts only */
+}
 
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
+	canvas{
+		margin-top: 40px;
+	}
+	footer {
+		top: 0;
+		bottom: inherit;
+	}
+  /* For landscape layouts only */
 }
 
 
