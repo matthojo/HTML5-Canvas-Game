@@ -254,8 +254,8 @@ $(document).ready(function() {
 	canvas.attr("height", canvasHeight);
 	
 	context.save();
-	context.fillStyle = '#12141A';
-	context.fillRect(0, 0, canvas.width(), canvas.height());
+	//context.fillStyle = '#12141A';
+	context.clearRect(0, 0, canvas.width(), canvas.height());
  	context.restore();
  		  
  	// 1 - apply velocity to position (vx -> x)
