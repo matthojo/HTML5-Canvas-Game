@@ -197,7 +197,7 @@ $(document).ready(function() {
 	 }
 	 
 	 enemies = new Array();
-	 numEnemies = 0;
+	 numEnemies = 1;
 	
 	 for (var i=0;i<numEnemies; i++){
 	 	var x = canvasWidth+20+Math.floor(Math.random()*canvasWidth);
