@@ -123,7 +123,7 @@ $(document).ready(function() {
 	 	this.y = y,
 	 	this.size = 8,
 	 	this.lifetime = 8000,
-	 	this.type = randomFromTo(1,4);
+	 	this.type = randomFromTo(1,5);
 	 }
 	 var Ship = function(x, y) {
 	   this.x = x,
@@ -152,7 +152,8 @@ $(document).ready(function() {
 	   this.powerupTime = 2000,
 	   this.shield = false,
 	   this.superSpeed = false,
-	   this.superFire = false
+	   this.superFire = false,
+	   this.laser = false
 	 };
 	 
 	 var ShipEnemy = function(x, y) {
@@ -196,7 +197,7 @@ $(document).ready(function() {
 	 }
 	 
 	 enemies = new Array();
-	 numEnemies = 1;
+	 numEnemies = 0;
 	
 	 for (var i=0;i<numEnemies; i++){
 	 	var x = canvasWidth+20+Math.floor(Math.random()*canvasWidth);
@@ -350,6 +351,14 @@ $(document).ready(function() {
 	 		 context.closePath();
 	 		context.fill();
 	 	}
+	 	if(ship.laser){
+	 		var laserGradient = context.createLinearGradient(ship.x+(ship.halfWidth),ship.y,ship.x+(ship.halfWidth -1)+400,ship.y+2);
+	 		laserGradient.addColorStop(1, 'rgba(255, 136, 136, 0)');
+	 		laserGradient.addColorStop(0, 'rgba(255, 136, 136, 0.5)');
+	 		context.fillStyle = laserGradient;
+	 		context.fillRect(ship.x+(ship.halfWidth -1),ship.y,400,2)
+	 		context.fill();
+	 	}
  		context.fillStyle = "#fff";
  		context.beginPath();
  		 context.moveTo(ship.x+ship.halfWidth, ship.y); // give the (x,y) coordinates
@@ -477,6 +486,12 @@ $(document).ready(function() {
 						context.font = "20px 800 Arial";
 						context.fillText("Speed", tmpPowerup.x+(tmpPowerup.size), tmpPowerup.y+(tmpPowerup.size/2)); 
 						break;
+				case 5:
+					colour = "255,255,255";
+					context.fillStyle = "rgb(166, 182, 194)";
+					context.font = "20px 800 Arial";
+					context.fillText("Laser", tmpPowerup.x+(tmpPowerup.size), tmpPowerup.y+(tmpPowerup.size/2)); 
+					
 				
 			}
 			var grd = context.createRadialGradient(tmpPowerup.x, tmpPowerup.y, 1, tmpPowerup.x, tmpPowerup.y, tmpPowerup.size*(Math.random()+4));
@@ -535,10 +550,11 @@ function resetPowerups(player){
 	player.powerup = false;
 	player.powerupTime = ship.resetPowerupTime;
 	player.shield = 0;
-  player.superSpeed = false;
-  player.superFire = false;
+  	player.superSpeed = false;
+  	player.superFire = false;
 	player.chargeRate = player.defaultChargeRate;
 	player.maxSpeed = player.defaultMaxSpeed;
+	player.laser = false;
 }
 function animateEnemy(tmpEnemy) {
     
@@ -712,6 +728,10 @@ function animateEnemy(tmpEnemy) {
  				player.powerup = true;
  				player.superSpeed = true;
  				player.maxSpeed = player.maxSpeed*2;
+ 				break;
+ 		case 5:
+ 				player.powerup = true;
+ 				player.laser = true;
  				break;
  		
  	}
