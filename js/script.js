@@ -147,13 +147,11 @@ $(document).ready(function() {
 	   this.rotation = 0,
 	   this.rotationSpeed = 2,
 	   this.flying = false,
-	   this.powerup = false,
 	   this.resetPowerupTime = 2000,
-	   this.powerupTime = 2000,
-	   this.shield = false,
-	   this.superSpeed = false,
-	   this.superFire = false,
-	   this.laser = false
+	   this.shield = {active:false, powerupTime:2000},
+	   this.superSpeed = {active:false, powerupTime:2000},
+	   this.superFire = {active:false, powerupTime:2000},
+	   this.laser = {active:false, powerupTime:2000}
 	 };
 	 
 	 var ShipEnemy = function(x, y) {
@@ -351,7 +349,7 @@ $(document).ready(function() {
 	 		 context.closePath();
 	 		context.fill();
 	 	}
-	 	if(ship.laser){
+	 	if(ship.laser.active){
 	 		var laserGradient = context.createLinearGradient(ship.x+(ship.halfWidth),ship.y,ship.x+(ship.halfWidth -1)+400,ship.y+2);
 	 		laserGradient.addColorStop(1, 'rgba(255, 136, 136, 0)');
 	 		laserGradient.addColorStop(0, 'rgba(255, 136, 136, 0.5)');
@@ -383,10 +381,20 @@ $(document).ready(function() {
  		context.arc(ship.x, ship.y, 30, 0, (ship.health*3.6)*Math.PI/180, false);
  		context.stroke();
  		
- 		if(ship.powerupTime > 0 && ship.powerup == true) ship.powerupTime--;
- 		else resetPowerups(ship);
+ 		if(ship.shield.powerupTime > 0 && ship.shield.active == true) ship.shield.powerupTime--;
+ 		else if(ship.shield.powerupTime <= 0 ) resetPowerup(ship, 1);
  		
- 		if(ship.shield){
+ 		if(ship.superSpeed.powerupTime > 0 && ship.superSpeed.active == true) ship.superSpeed.powerupTime--;
+ 		else if(ship.superSpeed.powerupTime <= 0 ) resetPowerup(ship, 4);
+ 		
+ 		if(ship.superFire.powerupTime > 0 && ship.superFire.active == true) ship.superFire.powerupTime--;
+ 		else if(ship.superFire.powerupTime <= 0 ) resetPowerup(ship, 3);
+ 		
+ 		if(ship.laser.powerupTime > 0 && ship.laser.active == true) ship.laser.powerupTime--;
+ 		else if(ship.laser.powerupTime <= 0 ) resetPowerup(ship, 5);
+ 		//else resetPowerups(ship);
+ 		
+ 		if(ship.shield.active){
  			var grd = context.createRadialGradient(ship.x, ship.y, 1, ship.x, ship.y, ship.width*(Math.random()+4));
  			grd.addColorStop(0, "rgba(255, 255, 255, 0)"); // light blue
  			grd.addColorStop(0.5, "rgba(255, 255, 255, 0)"); // light blue
@@ -547,14 +555,42 @@ $(document).ready(function() {
  	resetPowerups(player);
  }
 function resetPowerups(player){
-	player.powerup = false;
-	player.powerupTime = ship.resetPowerupTime;
-	player.shield = 0;
-  	player.superSpeed = false;
-  	player.superFire = false;
+	player.shield.active = false;
+	player.shield.powerupTime = ship.resetPowerupTime;
+  	player.superSpeed.active = false;
+  	player.superSpeed.powerupTime = ship.resetPowerupTime;
+  	player.superFire.active = false;
+  	player.superFire.powerupTime = ship.resetPowerupTime;
 	player.chargeRate = player.defaultChargeRate;
 	player.maxSpeed = player.defaultMaxSpeed;
-	player.laser = false;
+	player.laser.active = false;
+	player.laser.powerupTime = ship.resetPowerupTime;
+}
+function resetPowerup(player, powerup){
+	switch (powerup) {
+		case 1: 
+				player.shield.active = false;
+				player.shield.powerupTime = ship.resetPowerupTime;
+				break;
+		case 2:
+				//player.health = 100;
+				break;
+		case 3:
+				player.superFire.active = false;
+				player.superFire.powerupTime = ship.resetPowerupTime;
+				player.chargeRate = player.defaultChargeRate;
+				break;
+		case 4:
+				player.superSpeed.active = false;
+				player.superSpeed.powerupTime = ship.resetPowerupTime;
+				player.maxSpeed = player.defaultMaxSpeed;
+				break;
+		case 5:
+				player.laser.active = false;
+				player.laser.powerupTime = ship.resetPowerupTime;
+				break;
+		
+	}
 }
 function animateEnemy(tmpEnemy) {
     
@@ -580,7 +616,7 @@ function animateEnemy(tmpEnemy) {
     var dx = ship.x - tmpEnemy.x;
     var dy = ship.y - tmpEnemy.y;
     var distance = Math.sqrt((dx*dx)+(dy*dy));
-    if(distance <= (ship.width * 4) && ship.shield == true){
+    if(distance <= (ship.width * 4) && ship.shield.active == true){
     	tmpEnemy.x -= tmpEnemy.halfWidth;
     	tmpEnemy.y -= tmpEnemy.halfHeight;
     	tmpEnemy.speed = 0.5;
@@ -595,7 +631,7 @@ function animateEnemy(tmpEnemy) {
     	shoot(tmpEnemy);
     	tmpEnemy.flying = false;
     	//playGame = false;
-    	if(ship.superSpeed && ship.speed == ship.maxSpeed) destroy(tmpEnemy);
+    	if(ship.superSpeed.active && ship.speed == ship.maxSpeed) destroy(tmpEnemy);
     	
     }else{
     	if(tmpEnemy.speed < tmpEnemy.maxSpeed){ 
@@ -672,10 +708,10 @@ function animateEnemy(tmpEnemy) {
 	 	var dy = ship.y - bullet.y;
 	 	var distance = Math.sqrt((dx*dx)+(dy*dy));
 	 	//console.log(distance);
-	 	if(distance <= (ship.width * 4) && ship.shield == true){
+	 	if(distance <= (ship.width * 4) && ship.shield.active == true){
 	 		bullets.removeByValue(bullet);
 	 	}
-	 	else if(distance < ship.halfWidth && ship.shield == false){
+	 	else if(distance < ship.halfWidth && ship.shield.active == false){
 	 		bullets.removeByValue(bullet);
 			if(!muted){
 	 			hitSound.currentTime = 0;
@@ -713,25 +749,21 @@ function animateEnemy(tmpEnemy) {
  function usePowerup(player, type){
  	switch (type) {
  		case 1: 
- 				player.powerup = true;
- 				player.shield = true;
+ 				player.shield.active = true;
  				break;
  		case 2:
  				player.health = 100;
  				break;
  		case 3:
- 				player.powerup = true;
- 				player.superFire = true;
- 				player.chargeRate = player.chargeRate*2;
+ 				player.superFire.active = true;
+ 				player.chargeRate = player.defaultChargeRate*2;
  				break;
  		case 4:
- 				player.powerup = true;
- 				player.superSpeed = true;
+ 				player.superSpeed.active = true;
  				player.maxSpeed = player.maxSpeed*2;
  				break;
  		case 5:
- 				player.powerup = true;
- 				player.laser = true;
+ 				player.laser.active = true;
  				break;
  		
  	}
