@@ -895,14 +895,14 @@ function animateEnemy(tmpEnemy) {
    	document.body.addEventListener( 'touchstart', onTouchStart, false );
    	document.body.addEventListener( 'touchmove', onTouchMove, false );
    	document.body.addEventListener( 'touchend', onTouchEnd, false );
-   	window.onorientationchange = draw;  
-   	window.onresize = draw;
+   	document.addEventListener("orientationChanged", draw);  
+   	$(window).resize(draw);
    document.body.addEventListener("touchcancel", onTouchEnd, false);
    }else{
-   	$(document).keydown(onKeyDown);
-   	$(document).keyup(onKeyUp);
-   
+   		$(document).keydown(onKeyDown);
+   		$(document).keyup(onKeyUp);
    }
+   
  });
  
  $(window).resize(draw);
@@ -922,7 +922,7 @@ function animateEnemy(tmpEnemy) {
    element.style.top = y+"px";
    angle+=step;   
  }
- 
+
  /*setInterval(function() {
  	if(playGame){
  		draw();

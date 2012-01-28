@@ -358,6 +358,24 @@ font-family: 'IconicFill';
 	opacity: 0.4;
 }
 
+.touched{
+	display: none;
+	background: rgb(131, 245, 230);
+	position: absolute;
+	bottom: 40px;
+	width: 140px;
+	height: 140px;
+	-webkit-border-radius: 80px;
+	-moz-border-radius: 80px;
+	border-radius: 80px;
+	opacity: 0.1;
+}
+#shoot{
+	left: 40px;
+}
+#control{
+	right: 40px;
+}
 
 
 
