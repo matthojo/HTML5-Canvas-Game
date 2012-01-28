@@ -21,7 +21,7 @@
 
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=0.1">
   
   <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
 
@@ -67,7 +67,17 @@
   </audio>
   <div id="fps"></div>
   <footer>
-  	<div id="score">Score: 0</div>
+  	<div id="center">
+  		<span id="score">Score: 0</span>
+  		<div id="hud">
+  			<ul>
+  				<li class="iconic denied shield"></li>
+  				<li class="iconic bars_alt fire"></li>
+  				<li class="iconic bolt speed"></li>
+  				<li class="iconic target laser"></li>
+  			</ul>
+  		</div>
+  	</div>
   	<div id="highScore">High Score: 0</div>
   	<div id="settings">
   	  <ul>
@@ -84,7 +94,7 @@
 
   <!-- scripts concatenated and minified via build script -->
   <script defer src="js/plugins.js"></script>
-  <script defer src="js/script.js"></script>
+  <script defer src="js/script.js?v=0.21"></script>
   <!-- end scripts -->
 
 

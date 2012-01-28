@@ -238,9 +238,6 @@ footer {
 	background-image: linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#2b2b2b', EndColorStr='#212121');
 	border-top: 1px solid #333;
-	
-	
-	
 }
 #highScore{
 	color: #FFF;
@@ -251,7 +248,7 @@ footer {
 	margin-right: 20px;
 	display: block;
 }
-#score{
+#center{
 	position: relative;
 	display: block;
 	color: #FFF;
@@ -276,6 +273,62 @@ footer {
 	-moz-border-radius: 10px;
 	border-radius: 10px;
 	border-top: 1px solid #333;
+}
+#hud{
+	position: relative;
+	top: -120px;
+	left: -100px;
+	width: 280px;
+	height: 280px;
+	padding: 10px;
+	text-align: center;
+	color: #3ce8f2;
+	font-size: 20px;
+	background:rgba(131, 245, 230, 0.04);
+	border-top: 1px solid rgba(131, 245, 230, 0.08);
+	border-radius: 200px;
+	z-index: -1;
+	
+}
+#hud ul{
+	position: relative;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 250px;
+}
+#hud ul li{
+	position: relative;
+	display: inline-block;
+	margin-left: 30px;
+	opacity: 0.2;
+}
+#hud ul li.active{
+	opacity: 1;
+}
+.shield{
+	color: rgb(255, 255, 102);
+}
+.shield.active{
+	text-shadow: 0 0 10px rgba(255, 255, 102, 0.4);
+}
+.fire{
+	color: rgb(102, 255, 255);
+}
+.fire.active{
+	text-shadow: 0 0 10px rgba(102, 255, 255, 0.4);
+}
+.speed{
+	color: rgb(255, 102, 255);
+}
+.speed.active{
+	text-shadow: 0 0 10px rgba(255, 102, 255, 0.4);
+}
+.laser{
+	color: rgb(255, 255, 255);
+}
+.laser.active{
+	text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 .iconic {
 display: inline-block;
@@ -334,6 +387,15 @@ font-family: 'IconicFill';
   footer {
   	top: 0;
   	bottom: inherit;
+  }
+  #hud{
+  	top: -200px;
+  	border-top: none;
+  	border-bottom: 1px solid rgba(131, 245, 230, 0.08);
+  	
+  }
+  #hud ul{
+  	top: 250px;
   }
 }
 

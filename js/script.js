@@ -148,10 +148,10 @@ $(document).ready(function() {
 	   this.rotationSpeed = 2,
 	   this.flying = false,
 	   this.resetPowerupTime = 2000,
-	   this.shield = {active:false, powerupTime:2000},
-	   this.superSpeed = {active:false, powerupTime:2000},
-	   this.superFire = {active:false, powerupTime:2000},
-	   this.laser = {active:false, powerupTime:2000}
+	   this.shield = {active:false, powerupTime:2000, element:$(".shield")},
+	   this.superSpeed = {active:false, powerupTime:2000, element:$(".speed")},
+	   this.superFire = {active:false, powerupTime:2000, element:$(".fire")},
+	   this.laser = {active:false, powerupTime:2000, element:$(".laser")}
 	 };
 	 
 	 var ShipEnemy = function(x, y) {
@@ -571,6 +571,7 @@ function resetPowerup(player, powerup){
 		case 1: 
 				player.shield.active = false;
 				player.shield.powerupTime = ship.resetPowerupTime;
+				player.shield.element.removeClass('active');
 				break;
 		case 2:
 				//player.health = 100;
@@ -579,15 +580,18 @@ function resetPowerup(player, powerup){
 				player.superFire.active = false;
 				player.superFire.powerupTime = ship.resetPowerupTime;
 				player.chargeRate = player.defaultChargeRate;
+				player.superFire.element.removeClass('active');
 				break;
 		case 4:
 				player.superSpeed.active = false;
 				player.superSpeed.powerupTime = ship.resetPowerupTime;
 				player.maxSpeed = player.defaultMaxSpeed;
+				player.superSpeed.element.removeClass('active');
 				break;
 		case 5:
 				player.laser.active = false;
 				player.laser.powerupTime = ship.resetPowerupTime;
+				player.laser.element.removeClass('active');
 				break;
 		
 	}
@@ -750,6 +754,7 @@ function animateEnemy(tmpEnemy) {
  	switch (type) {
  		case 1: 
  				player.shield.active = true;
+ 				player.shield.element.addClass('active');
  				break;
  		case 2:
  				player.health = 100;
@@ -757,13 +762,16 @@ function animateEnemy(tmpEnemy) {
  		case 3:
  				player.superFire.active = true;
  				player.chargeRate = player.defaultChargeRate*2;
+ 				player.superFire.element.addClass('active');
  				break;
  		case 4:
  				player.superSpeed.active = true;
  				player.maxSpeed = player.maxSpeed*2;
+ 				player.superSpeed.element.addClass('active');
  				break;
  		case 5:
  				player.laser.active = true;
+ 				player.laser.element.addClass('active');
  				break;
  		
  	}
@@ -894,6 +902,22 @@ function animateEnemy(tmpEnemy) {
  });
  
  $(window).resize(draw);
+ 
+ var listElements = $('#hud ul li').get();
+ var step = (2*Math.PI)/listElements.length;
+ var arch_height = 40;
+ if(touchable) arch_height = -40;
+ var circleCenterX = 100;
+ var circleCenterY = 0;
+ var radius = 350;
+ for(var i = 0; i<listElements.length; i++)
+ { 
+   var element = listElements[i];
+   var angle=Math.PI/(listElements.length - 1),
+         y=(1-Math.sin(angle * i))*arch_height;
+   element.style.top = y+"px";
+   angle+=step;   
+ }
  
  /*setInterval(function() {
  	if(playGame){
