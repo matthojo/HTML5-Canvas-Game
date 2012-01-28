@@ -557,14 +557,18 @@ $(document).ready(function() {
 function resetPowerups(player){
 	player.shield.active = false;
 	player.shield.powerupTime = ship.resetPowerupTime;
+	player.shield.element.removeClass('active');
   	player.superSpeed.active = false;
   	player.superSpeed.powerupTime = ship.resetPowerupTime;
+  	player.superSpeed.element.removeClass('active');
   	player.superFire.active = false;
   	player.superFire.powerupTime = ship.resetPowerupTime;
+  	player.superFire.element.removeClass('active');
 	player.chargeRate = player.defaultChargeRate;
 	player.maxSpeed = player.defaultMaxSpeed;
 	player.laser.active = false;
 	player.laser.powerupTime = ship.resetPowerupTime;
+	player.laser.element.removeClass('active');
 }
 function resetPowerup(player, powerup){
 	switch (powerup) {
