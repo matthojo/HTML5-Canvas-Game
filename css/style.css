@@ -244,7 +244,7 @@ footer {
 	float: right;
 	height: 40px;
 	position: relative;
-	top: -50px;
+	top: -152px;
 	margin-right: 20px;
 	display: block;
 }
@@ -253,11 +253,11 @@ footer {
 	display: block;
 	color: #FFF;
 	top: -10px;
-	height: 40px;
-	width: 100px;
+	height: 140px;
+	width: 140px;
 	text-align: center;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 28px;
 	margin: 0 auto;
 	background-color: #2b2b2b;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(43, 43, 43)), to(rgb(33, 33, 33)));
@@ -269,15 +269,18 @@ footer {
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#2b2b2b', EndColorStr='#212121');
 	box-shadow: 0px 0px 10px #121212;
 	padding: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
+	-webkit-border-radius: 40px;
+	-moz-border-radius: 40px;
+	border-radius: 80px;
 	border-top: 1px solid #333;
+}
+#score{
+
 }
 #hud{
 	position: relative;
-	top: -120px;
-	left: -100px;
+	top: -130px;
+	left: -80px;
 	width: 280px;
 	height: 280px;
 	padding: 10px;
@@ -338,7 +341,7 @@ font-family: 'IconicFill';
 	color: #FFF;
 	height: 40px;
 	position: relative;
-	top: -50px;
+	top: -152px;
 	margin-left: 20px;
 	float: left;
 }
