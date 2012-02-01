@@ -15,7 +15,7 @@ Array.prototype.removeByValue = function (val) {
             break;
         }
     }
-}
+};
 
 $(document).ready(function () {
 
@@ -63,7 +63,6 @@ $(document).ready(function () {
     var context = canvas.get(0).getContext("2d");
     var canvasWidth = $(window).get(0).innerWidth;
     var canvasHeight = $(window).get(0).innerHeight - footerHeight;
-    var refreshRate = 77;
 
     var playGame = true;
     var muted = false;
@@ -72,19 +71,13 @@ $(document).ready(function () {
     var scoreOut = document.getElementById('score');
     var highScoreOut = document.getElementById('highScore');
     var stars;
-    var numstars;
+    var numStars;
     var enemies;
     var numEnemies;
 
     var powerups;
     var numPowerups;
-    var maxNumPowerups;
-    var powerupCharge;
-    var powerupChargeRate;
-    var powerupCharged;
 
-    var canX;
-    var canY;
     var touchable = 'ontouchstart' in window || 'createTouch' in document;
     //if(touchable) refreshRate = 35;
     if (touchable) muted = true;
@@ -111,75 +104,75 @@ $(document).ready(function () {
     var Bullet = function (owner) {
         this.x = owner.x;
         this.y = owner.y;
-            this.rotation = owner.rotation;
-            this.vx = 0;
-            this.vy = 0;
-            this.speed = 10;
-            this.size = 3;
-            this.lifetime = 800;
-            this.owner = owner;
+        this.rotation = owner.rotation;
+        this.vx = 0;
+        this.vy = 0;
+        this.speed = 10;
+        this.size = 3;
+        this.lifetime = 800;
+        this.owner = owner;
     }
 
     var Powerup = function (x, y) {
         this.x = x;
-            this.y = y;
-            this.size = 8;
-            this.lifetime = 8000;
-            this.type = randomFromTo(1, 5);
+        this.y = y;
+        this.size = 8;
+        this.lifetime = 8000;
+        this.type = randomFromTo(1, 5);
     }
     var Ship = function (x, y) {
         this.x = x;
-            this.y = y;
-            this.width = 20;
-            this.height = 20;
-            this.halfWidth = this.width / 2;
-            this.halfHeight = this.height / 2;
-            this.vx = 0;
-            this.vy = 0;
-            this.speed = 0;
-            this.defaultMaxSpeed = 4;
-            this.maxSpeed = 4;
-            this.energy = 360;
-            this.energyRate = 18;
-            this.charge = 0;
-            this.defaultChargeRate = 10;
-            this.chargeRate = 10;
-            this.health = 100;
-            this.elasticity = 1;
-            this.rotation = 0;
-            this.rotationSpeed = 2;
-            this.flying = false;
-            this.resetPowerupTime = 2000;
-            this.shield = {active:false, powerupTime:2000, element:$(".shield")};
-            this.superSpeed = {active:false, powerupTime:2000, element:$(".speed")};
-            this.superFire = {active:false, powerupTime:2000, element:$(".fire")};
-            this.laser = {active:false, powerupTime:2000, element:$(".laser")};
+        this.y = y;
+        this.width = 20;
+        this.height = 20;
+        this.halfWidth = this.width / 2;
+        this.halfHeight = this.height / 2;
+        this.vx = 0;
+        this.vy = 0;
+        this.speed = 0;
+        this.defaultMaxSpeed = 4;
+        this.maxSpeed = 4;
+        this.energy = 360;
+        this.energyRate = 18;
+        this.charge = 0;
+        this.defaultChargeRate = 10;
+        this.chargeRate = 10;
+        this.health = 100;
+        this.elasticity = 1;
+        this.rotation = 0;
+        this.rotationSpeed = 2;
+        this.flying = false;
+        this.resetPowerupTime = 2000;
+        this.shield = {active:false, powerupTime:2000, element:$(".shield")};
+        this.superSpeed = {active:false, powerupTime:2000, element:$(".speed")};
+        this.superFire = {active:false, powerupTime:2000, element:$(".fire")};
+        this.laser = {active:false, powerupTime:2000, element:$(".laser")};
     };
 
     var ShipEnemy = function (x, y) {
         this.x = x;
-            this.y = y;
-            this.width = 20;
-            this.height = 20;
-            this.halfWidth = this.width / 2;
-            this.halfHeight = this.height / 2;
-            this.vx = 0;
-            this.vy = 0;
-            this.speed = 0;
-            this.defaultMaxSpeed = 2;
-            this.maxSpeed = 2;
-            this.energy = 360;
-            this.energyRate = 18;
-            this.charge = 0;
-            this.chargeRate = 10;
-            this.defaultChargeRate = 10;
-            this.health = 10;
-            this.reactionTime = 20;
-            this.accuracy = 20;
-            this.elasticity = 1;
-            this.rotation = 0;
-            this.rotationSpeed = 4;
-            this.flying = false
+        this.y = y;
+        this.width = 20;
+        this.height = 20;
+        this.halfWidth = this.width / 2;
+        this.halfHeight = this.height / 2;
+        this.vx = 0;
+        this.vy = 0;
+        this.speed = 0;
+        this.defaultMaxSpeed = 2;
+        this.maxSpeed = 2;
+        this.energy = 360;
+        this.energyRate = 18;
+        this.charge = 0;
+        this.chargeRate = 10;
+        this.defaultChargeRate = 10;
+        this.health = 10;
+        this.reactionTime = 20;
+        this.accuracy = 20;
+        this.elasticity = 1;
+        this.rotation = 0;
+        this.rotationSpeed = 4;
+        this.flying = false
     };
 
     stars = new Array();
@@ -213,27 +206,29 @@ $(document).ready(function () {
 
     powerups = new Array();
     numPowerups = 1;
-    maxNumPowerups = 2;
-    powerupCharge = 200;
-    powerupChargeRate = 1;
-    powerupChargeMax = 1000;
+    var maxNumPowerups = 2;
+    var powerupCharge = 200;
+    var powerupChargeRate = 1;
+    var powerupChargeMax = 1000;
 
     for (var i = 0; i < numPowerups; i++) {
         var x = Math.floor(Math.random() * canvasWidth);
         var y = Math.floor(Math.random() * canvasHeight);
         powerups.push(new Powerup(x, y));
     }
+
     function draw() {
 
         var canvasWidth = $(window).get(0).innerWidth;
         var canvasHeight = $(window).get(0).innerHeight - footerHeight;
         window.scrollTo(0, 0);
 
-        while (enemies.length < numEnemies) {
+        if(enemies.length < numEnemies) {
             var x = canvasWidth + 20 + Math.floor(Math.random() * canvasWidth);
             var y = Math.floor(Math.random() * canvasHeight);
             enemies.push(new ShipEnemy(x, y));
         }
+
         if (powerupCharge == powerupChargeMax) {
 
             if (numPowerups < maxNumPowerups) {
@@ -242,7 +237,7 @@ $(document).ready(function () {
             }
         }
 
-        while (powerups.length < numPowerups) {
+        if(powerups.length < numPowerups) {
             var x = Math.floor(Math.random() * canvasWidth);
             var y = Math.floor(Math.random() * canvasHeight);
             powerups.push(new Powerup(x, y));
@@ -946,7 +941,6 @@ $(document).ready(function () {
     function startGame() {
         requestAnimationFrame(startGame);
         draw();
-
     }
 
     startGame();
