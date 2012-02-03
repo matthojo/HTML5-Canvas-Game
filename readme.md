@@ -26,6 +26,7 @@ This is my first HTML5 Canvas game, it is heavily inspired by [Rawkets](http://r
 * [jQuery](http://jquery.com/): MIT/GPL license
 * [Modernizr](http://www.modernizr.com/): MIT/BSD license
 * [Iconic Icons](https://github.com/somerandomdude/Iconic): GPL license
+* [FPS stats](https://github.com/mrdoob/stats.js): MIT
 
 ### Everything else:
 [GPL 2.0 license](http://www.opensource.org/licenses/gpl-2.0.php)
