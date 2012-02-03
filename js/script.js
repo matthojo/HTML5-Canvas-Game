@@ -913,12 +913,12 @@ $(document).ready(function () {
     $(document).ready(function () {
 
         if (touchable) {
-            $(document).addEventListener('touchstart', onTouchStart, false);
-            $(document).addEventListener('touchmove', onTouchMove, false);
-            $(document).addEventListener('touchend', onTouchEnd, false);
-            $(document).addEventListener("orientationChanged", draw);
-            $(window).resize(draw);
-            $(document).addEventListener("touchcancel", onTouchEnd, false);
+            window.document.addEventListener('touchstart', onTouchStart, false);
+            window.document.addEventListener('touchmove', onTouchMove, false);
+            window.document.addEventListener('touchend', onTouchEnd, false);
+            window.document.addEventListener("orientationChanged", draw);
+            window.document.resize(draw);
+            window.document.addEventListener("touchcancel", onTouchEnd, false);
         } else {
             $(document).keydown(onKeyDown);
             $(document).keyup(onKeyUp);
