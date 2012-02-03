@@ -3,6 +3,7 @@
 
 // Array Remove - By John Resig (MIT Licensed)
 Array.remove = function (array, from, to) {
+
     var rest = array.slice((to || from) + 1 || array.length);
     array.length = from < 0 ? array.length + from : from;
     return array.push.apply(array, rest);
@@ -10,7 +11,7 @@ Array.remove = function (array, from, to) {
 
 Array.prototype.removeByValue = function (val) {
     for (var i = 0; i < this.length; i++) {
-        if (this[i] == val) {
+        if (this[i] === val) {
             this.splice(i, 1);
             break;
         }
@@ -34,74 +35,66 @@ $(document).ready(function () {
                 || window[vendors[x] + 'CancelRequestAnimationFrame'];
         }
 
-        if (!window.requestAnimationFrame)
-            window.requestAnimationFrame = function (callback, element) {
-                var currTime = new Date().getTime();
-                var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-                var id = window.setTimeout(function () {
-                        callback(currTime + timeToCall);
-                    },
-                    timeToCall);
-                lastTime = currTime + timeToCall;
-                return id;
-            };
+        if (!window.requestAnimationFrame) window.requestAnimationFrame = function (callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function () {
+                    callback(currTime + timeToCall);
+                },
+                timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
 
-        if (!window.cancelAnimationFrame)
+        if (!window.cancelAnimationFrame) {
             window.cancelAnimationFrame = function (id) {
                 clearTimeout(id);
             };
+        }
     }());
 
+    /* FPS monitoring
+     *
+     * The higher the 'fpsFilter' value, the less the FPS will be affected by quick changes
+     * Setting this to 1 will show you the FPS of the last sampled frame only
+     */
     var fps = 0, now, lastUpdate = (new Date) - 1;
-
-    // The higher this value, the less the FPS will be affected by quick changes
-    // Setting this to 1 will show you the FPS of the last sampled frame only
     var fpsFilter = 50;
 
+    // Canvas Settings
     var canvas = $("#myCanvas");
     var footerHeight = $("footer").height();
     var context = canvas.get(0).getContext("2d");
     var canvasWidth = $(window).get(0).innerWidth;
     var canvasHeight = $(window).get(0).innerHeight - footerHeight;
 
-    var playGame = true;
-    var muted = false;
-    var score = 0;
-    var highScore = 0;
-    var scoreOut = document.getElementById('score');
-    var highScoreOut = document.getElementById('highScore');
-    var stars;
-    var numStars;
-    var enemies;
-    var numEnemies;
+    // Game settings
+    var playGame = true, muted = false;
+    var score = 0, highScore = 0, scoreOut = document.getElementById('score'), highScoreOut = document.getElementById('highScore');
+    var stars, numStars;
+    var enemies, numEnemies;
+    var powerups, numPowerups;
 
-    var powerups;
-    var numPowerups;
-
+    // Initialise controls
     var touchable = 'ontouchstart' in window || 'createTouch' in document;
     //if(touchable) refreshRate = 35;
     if (touchable) muted = true;
-    var touches = []; // array of touch vectors
-    var rightKey = false;
-    var leftKey = false;
-    var upKey = false;
-    var downKey = false;
-    var space = false;
+    var touches = [], rightKey = false, leftKey = false, upKey = false, downKey = false, space = false;
 
-    var shootSound = $("#shootSound").get(0);
+    // Initialise Sounds
+    var shootSound = $("#shootSound").get(0), destroySound = $("#destroySound").get(0), powerupSound = $("#powerupSound").get(0), hitSound = $("#hitSound").get(0);
     //var thrustersSound = $("#thrustersSound").get(0);
-    var destroySound = $("#destroySound").get(0);
-    var powerupSound = $("#powerupSound").get(0);
-    var hitSound = $("#hitSound").get(0);
 
+    // Initilise objects
+    var Star, Bullet, Powerup, Ship, ShipEnemy;
 
-    var Star = function (x, y) {
+    Star = function (x, y) {
         this.x = x;
         this.y = y;
         this.brightness = Math.floor(Math.random() * 4);
         this.radius = Math.floor(Math.random() * 4);
-    }
-    var Bullet = function (owner) {
+    };
+    Bullet = function (owner) {
         this.x = owner.x;
         this.y = owner.y;
         this.rotation = owner.rotation;
@@ -111,16 +104,16 @@ $(document).ready(function () {
         this.size = 3;
         this.lifetime = 800;
         this.owner = owner;
-    }
+    };
 
-    var Powerup = function (x, y) {
+    Powerup = function (x, y) {
         this.x = x;
         this.y = y;
         this.size = 8;
         this.lifetime = 8000;
         this.type = randomFromTo(1, 5);
-    }
-    var Ship = function (x, y) {
+    };
+    Ship = function (x, y) {
         this.x = x;
         this.y = y;
         this.width = 20;
@@ -149,7 +142,7 @@ $(document).ready(function () {
         this.laser = {active:false, powerupTime:2000, element:$(".laser")};
     };
 
-    var ShipEnemy = function (x, y) {
+    ShipEnemy = function (x, y) {
         this.x = x;
         this.y = y;
         this.width = 20;
@@ -185,7 +178,8 @@ $(document).ready(function () {
     }
     while (stars.length < numStars) {
         var x = canvasWidth + 20 + Math.floor(Math.random() * canvasWidth);
-        var y = Math.floor(Math.random() * canvasHeight);
+        var y;
+        y = Math.floor(Math.random() * canvasHeight);
         stars.push(new Star(x, y));
     }
 
@@ -206,10 +200,7 @@ $(document).ready(function () {
 
     powerups = new Array();
     numPowerups = 1;
-    var maxNumPowerups = 2;
-    var powerupCharge = 200;
-    var powerupChargeRate = 1;
-    var powerupChargeMax = 1000;
+    var maxNumPowerups = 2, powerupCharge = 200, powerupChargeRate = 1, powerupChargeMax = 1000;
 
     for (var i = 0; i < numPowerups; i++) {
         var x = Math.floor(Math.random() * canvasWidth);
@@ -223,7 +214,7 @@ $(document).ready(function () {
         var canvasHeight = $(window).get(0).innerHeight - footerHeight;
         window.scrollTo(0, 0);
 
-        if(enemies.length < numEnemies) {
+        if (enemies.length < numEnemies) {
             var x = canvasWidth + 20 + Math.floor(Math.random() * canvasWidth);
             var y = Math.floor(Math.random() * canvasHeight);
             enemies.push(new ShipEnemy(x, y));
@@ -237,7 +228,7 @@ $(document).ready(function () {
             }
         }
 
-        if(powerups.length < numPowerups) {
+        if (powerups.length < numPowerups) {
             var x = Math.floor(Math.random() * canvasWidth);
             var y = Math.floor(Math.random() * canvasHeight);
             powerups.push(new Powerup(x, y));
@@ -351,7 +342,7 @@ $(document).ready(function () {
             laserGradient.addColorStop(1, 'rgba(255, 136, 136, 0)');
             laserGradient.addColorStop(0, 'rgba(255, 136, 136, 0.5)');
             context.fillStyle = laserGradient;
-            context.fillRect(ship.x + (ship.halfWidth - 1), ship.y, 400, 2)
+            context.fillRect(ship.x + (ship.halfWidth - 1), ship.y, 400, 2);
             context.fill();
         }
         context.fillStyle = "#fff";
@@ -521,19 +512,21 @@ $(document).ready(function () {
         for (var i = 0; i < bulletsLength; i++) {
             var tmpBullet = bullets[i];
             try {
-                context.save();
-                context.translate(tmpBullet.x, tmpBullet.y);
-                context.rotate((tmpBullet.rotation) * Math.PI / 180);
-                context.translate(-tmpBullet.x, -tmpBullet.y);
-                context.fillStyle = '#FFF';
-                context.beginPath();
-                context.fillRect(tmpBullet.x, tmpBullet.y, tmpBullet.size * 4, tmpBullet.size);
-                context.closePath();
-                context.fill();
-                context.restore();
-                animateBullet(tmpBullet, i);
+                if(tmpBullet){
+                    context.save();
+                    context.translate(tmpBullet.x, tmpBullet.y);
+                    context.rotate((tmpBullet.rotation) * Math.PI / 180);
+                    context.translate(-tmpBullet.x, -tmpBullet.y);
+                    context.fillStyle = '#FFF';
+                    context.beginPath();
+                    context.fillRect(tmpBullet.x, tmpBullet.y, tmpBullet.size * 4, tmpBullet.size);
+                    context.closePath();
+                    context.fill();
+                    context.restore();
+                    animateBullet(tmpBullet, i);
+                }
             } catch (error) {
-                // Do nothing
+                console.log(error);
             }
         }
         ship.flying = false;
@@ -902,12 +895,12 @@ $(document).ready(function () {
     $(document).ready(function () {
 
         if (touchable) {
-            document.body.addEventListener('touchstart', onTouchStart, false);
-            document.body.addEventListener('touchmove', onTouchMove, false);
-            document.body.addEventListener('touchend', onTouchEnd, false);
-            document.addEventListener("orientationChanged", draw);
+            $(document).addEventListener('touchstart', onTouchStart, false);
+            $(document).addEventListener('touchmove', onTouchMove, false);
+            $(document).addEventListener('touchend', onTouchEnd, false);
+            $(document).addEventListener("orientationChanged", draw);
             $(window).resize(draw);
-            document.body.addEventListener("touchcancel", onTouchEnd, false);
+            $(document).addEventListener("touchcancel", onTouchEnd, false);
         } else {
             $(document).keydown(onKeyDown);
             $(document).keyup(onKeyUp);
