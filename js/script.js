@@ -1,5 +1,4 @@
-/* Author: Matthew Harrison-Jones
- */
+// Author: Matthew Harrison-Jones
 
 // Array Remove - By John Resig (MIT Licensed)
 Array.remove = function (array, from, to) {
@@ -92,7 +91,7 @@ $(document).ready(function () {
 
     // Game settings
     var playGame = true, muted = false;
-    var score = 0, highScore = 0, scoreOut = document.getElementById('score'), highScoreOut = document.getElementById('highScore');
+    var score = 0, highScore = 0, scoreOut = $("#score"), highScoreOut = $("#highScore");
     var stars, numStars;
     var enemies, numEnemies;
     var powerups, numPowerups;
@@ -162,6 +161,7 @@ $(document).ready(function () {
         this.superSpeed = {active:false, powerupTime:2000, element:$(".speed")};
         this.superFire = {active:false, powerupTime:2000, element:$(".fire")};
         this.laser = {active:false, powerupTime:2000, element:$(".laser")};
+        this.level = 1;
     };
 
     ShipEnemy = function (x, y) {
@@ -209,7 +209,7 @@ $(document).ready(function () {
     numEnemies = 1;
 
     for (var i = 0; i < numEnemies; i++) {
-        var x = canvasWidth + 20 + Math.floor(Math.random() * canvasWidth);
+        var x = Math.floor(Math.random() * canvasWidth);
         var y = Math.floor(Math.random() * canvasHeight);
         enemies.push(new ShipEnemy(x, y));
     }
@@ -237,7 +237,7 @@ $(document).ready(function () {
         window.scrollTo(0, 0);
 
         if (enemies.length < numEnemies) {
-            var x = canvasWidth + 20 + Math.floor(Math.random() * canvasWidth);
+            var x = Math.floor(Math.random() * canvasWidth);
             var y = Math.floor(Math.random() * canvasHeight);
             enemies.push(new ShipEnemy(x, y));
         }
@@ -635,6 +635,23 @@ $(document).ready(function () {
         var dx = ship.x - tmpEnemy.x;
         var dy = ship.y - tmpEnemy.y;
         var distance = Math.sqrt((dx * dx) + (dy * dy));
+
+        if (numEnemies > 1) {
+            for (i = 0; i < enemies.length; i++) {
+                var dxTwo, dyTwo, distanceTwo;
+                var tmpEnemyTwo = enemies[i];
+                if (tmpEnemyTwo != tmpEnemy) {
+                    dxTwo = tmpEnemyTwo.x - tmpEnemy.x;
+                    dyTwo = tmpEnemyTwo.y - tmpEnemy.y;
+                    distanceTwo = Math.sqrt((dxTwo * dxTwo) + (dyTwo * dyTwo));
+                    var randomOption = Math.floor(Math.random() * 10);
+                    if (distanceTwo < tmpEnemyTwo.width) {
+                        tmpEnemy.x -= randomOption;
+                        tmpEnemy.y -= randomOption;
+                    }
+                }
+            }
+        }
         if (distance <= (ship.width * 4) && ship.shield.active) {
             tmpEnemy.x -= tmpEnemy.halfWidth;
             tmpEnemy.y -= tmpEnemy.halfHeight;
@@ -676,6 +693,7 @@ $(document).ready(function () {
             tmpEnemy.x += tmpEnemy.vx;
             tmpEnemy.y += tmpEnemy.vy;
         }
+        if (numEnemies < enemies.length) removeEnemy(tmpEnemy);
 
     }
 
@@ -705,13 +723,14 @@ $(document).ready(function () {
         bullet.x += bullet.vx;
         bullet.y += bullet.vy;
 
+        var dx, dy, distance;
         if (bullet.owner == ship) {
             for (i = 0; i < enemies.length; i++) {
                 var tmpEnemy = enemies[i];
 
-                var dx = tmpEnemy.x - bullet.x;
-                var dy = tmpEnemy.y - bullet.y;
-                var distance = Math.sqrt((dx * dx) + (dy * dy));
+                dx = tmpEnemy.x - bullet.x;
+                dy = tmpEnemy.y - bullet.y;
+                distance = Math.sqrt((dx * dx) + (dy * dy));
                 //console.log(distance);
                 if (distance < tmpEnemy.width) {
                     //playGame = false;
@@ -724,9 +743,9 @@ $(document).ready(function () {
 
             }
         } else {
-            var dx = ship.x - bullet.x;
-            var dy = ship.y - bullet.y;
-            var distance = Math.sqrt((dx * dx) + (dy * dy));
+            dx = ship.x - bullet.x;
+            dy = ship.y - bullet.y;
+            distance = Math.sqrt((dx * dx) + (dy * dy));
             //console.log(distance);
             if (distance <= (ship.width * 4) && ship.shield.active) {
                 bullets.removeByValue(bullet);
@@ -830,7 +849,8 @@ $(document).ready(function () {
             }
             enemies.removeByValue(player);
             score++;
-            scoreOut.innerHTML = score;
+            scoreOut.text(score);
+            levelUp();
         } else if (player.health == 0 && player == ship) {
             resetPlayer(player);
             if (!muted) {
@@ -842,11 +862,58 @@ $(document).ready(function () {
         }
     }
 
+    function removeEnemy(enemy) {
+        enemies.removeByValue(enemy);
+    }
+
+    function levelUp() {
+
+        switch (score) {
+            case 20:
+                if (ship.level != 2) ship.level++;
+                numEnemies++;
+                break;
+            case 30:
+                if (ship.level != 3) ship.level++;
+                numEnemies++;
+                break;
+            case 40:
+                if (ship.level != 4) ship.level++;
+                numEnemies++;
+                break;
+            case 50:
+                if (ship.level != 5) ship.level++;
+                numEnemies++;
+                break;
+            case 60:
+                if (ship.level != 6) ship.level++;
+                numEnemies++;
+                break;
+            case 70:
+                if (ship.level != 7) ship.level++;
+                numEnemies++;
+                break;
+            case 80:
+                if (ship.level != 8) ship.level++;
+                numEnemies++;
+                break;
+            case 90:
+                if (ship.level != 9) ship.level++;
+                numEnemies++;
+                break;
+            case 100:
+                if (ship.level != 1) ship.level++;
+                numEnemies++;
+                break;
+        }
+    }
+
     function endGame() {
         saveHighScore();
         updateHighScore();
+        numEnemies = 1;
         score = 0;
-        scoreOut.innerHTML = score;
+        scoreOut.text(score);
     }
 
     function saveHighScore() {
@@ -859,10 +926,10 @@ $(document).ready(function () {
 
     function updateHighScore() {
         if (Modernizr.localstorage && localStorage.getItem('highScore')) {
-            highScoreOut.innerHTML = "High Score: " + localStorage.getItem('highScore');
+            highScoreOut.text("High Score: " + localStorage.getItem('highScore'));
             highScore = localStorage.getItem('highScore');
         } else {
-            highScoreOut.innerHTML = "High Score: 0";
+            highScoreOut.text("High Score: 0");
         }
     }
 
@@ -927,18 +994,18 @@ $(document).ready(function () {
     });
 
     $(window).resize(draw);
-
-    var listElements = $('#hud ul li').get();
-    var step = (2 * Math.PI) / listElements.length;
-    var arch_height = 40;
-    if (touchable) arch_height = -40;
-    var circleCenterX = 100;
-    var circleCenterY = 0;
-    var radius = 350;
+    var listElements, step, archHeight, circleCenterX, circleCenterY, radius;
+    listElements = $('#hud ul li').get();
+    step = (2 * Math.PI) / listElements.length;
+    archHeight = 40;
+    if (touchable) archHeight = -40;
+    circleCenterX = 100;
+    circleCenterY = 0;
+    radius = 350;
     for (var i = 0; i < listElements.length; i++) {
         var element = listElements[i];
         var angle = Math.PI / (listElements.length - 1),
-            y = (1 - Math.sin(angle * i)) * arch_height;
+            y = (1 - Math.sin(angle * i)) * archHeight;
         element.style.top = y + "px";
         angle += step;
     }
