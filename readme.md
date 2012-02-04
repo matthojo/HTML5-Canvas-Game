@@ -31,4 +31,5 @@ This is my first HTML5 Canvas game, it is heavily inspired by [Rawkets](http://r
 
 ### Everything else:
 [GPL 2.0 license](http://www.opensource.org/licenses/gpl-2.0.php)
+
 Copyright 2012 Matthew Harrison-Jones
