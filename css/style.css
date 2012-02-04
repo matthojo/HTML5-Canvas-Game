@@ -247,11 +247,12 @@ footer {
 	top: -152px;
 	margin-right: 20px;
 	display: block;
+	text-shadow: 0 1px 0 #000;
 }
 #center{
 	position: relative;
 	display: block;
-	color: #FFF;
+	color: #02fbd7;
 	top: -10px;
 	height: 140px;
 	width: 140px;
@@ -259,24 +260,17 @@ footer {
 	font-weight: bold;
 	font-size: 28px;
 	margin: 0 auto;
-	background-color: #2b2b2b;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(43, 43, 43)), to(rgb(33, 33, 33)));
-	background-image: -webkit-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
-	background-image: -moz-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
-	background-image: -o-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
-	background-image: -ms-linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
-	background-image: linear-gradient(top, rgb(43, 43, 43), rgb(33, 33, 33));
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#2b2b2b', EndColorStr='#212121');
-	box-shadow: 0px 0px 10px #121212;
-	padding: 10px;
+	background:rgba(131, 245, 230, 0.04);
+	border-top: 1px solid rgba(2, 250, 214, 0.1);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.29);
 	-webkit-border-radius: 40px;
 	-moz-border-radius: 40px;
 	border-radius: 80px;
-	border-top: 1px solid #333;
+	padding: 8px 10px 10px;
 }
 #score{
     position: relative;
-	text-shadow: 0px 0 1px #000;
+	text-shadow: 0 0 4px rgba(1, 251, 215, 0.35);
 }
 #hud{
 	position: relative;
@@ -357,6 +351,7 @@ font-family: 'IconicFill';
 }
 #toggleSound{
 	font-size: 20px;
+	text-shadow: 0 1px 0 #000;
 }
 #toggleSound.muted{
 	opacity: 0.4;
