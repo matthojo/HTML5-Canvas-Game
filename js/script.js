@@ -656,7 +656,13 @@ $(document).ready(function () {
             tmpEnemy.x -= tmpEnemy.halfWidth;
             tmpEnemy.y -= tmpEnemy.halfHeight;
             tmpEnemy.speed = 0.5;
-            shoot(tmpEnemy);
+            if(tmpEnemy.energy > 0){
+                shoot(tmpEnemy);
+            }
+            else {
+                regen(tmpEnemy);
+            }
+
             tmpEnemy.flying = false;
         } else
         if (distance < ship.width + tmpEnemy.halfWidth) {
@@ -664,9 +670,15 @@ $(document).ready(function () {
             tmpEnemy.x += 0;
             tmpEnemy.y += 0;
             tmpEnemy.speed = 0;
-            shoot(tmpEnemy);
+
+            if(tmpEnemy.energy > 0){
+                shoot(tmpEnemy);
+            }
+            else {
+                regen(tmpEnemy);
+            }
+
             tmpEnemy.flying = false;
-            //playGame = false;
             if (ship.superSpeed.active && ship.speed == ship.maxSpeed) destroy(tmpEnemy);
 
         } else {
