@@ -460,25 +460,26 @@ $(document).ready(function () {
         }
 
         var starsLength = stars.length;
+        context.save();
         for (var i = 0; i < starsLength; i++) {
             var tmpStar = stars[i];
             //context.translate(tmpStar.x, tmpStar.y);
             var brightness = 'rgba(255,255,255, 0.' + tmpStar.brightness + ')';
-            context.save();
             context.fillStyle = brightness;
             context.beginPath();
             context.arc(tmpStar.x, tmpStar.y, tmpStar.radius, 0, Math.PI * 2, true);
             context.closePath();
             context.fill();
-            context.restore();
         }
+        context.restore();
+
 
         var powerupsLength = powerups.length;
+        context.save();
         for (var i = 0; i < powerupsLength; i++) {
             var tmpPowerup = powerups[i];
             //context.translate(tmpStar.x, tmpStar.y);
             var colour;
-            context.save();
             switch (tmpPowerup.type) {
                 case 1:
                     colour = "255, 255, 102";
@@ -526,9 +527,9 @@ $(document).ready(function () {
             context.arc(tmpPowerup.x, tmpPowerup.y, tmpPowerup.size, 0, Math.PI * 2, true);
             context.closePath();
             context.fill();
-            context.restore();
             animatePowerup(tmpPowerup);
         }
+        context.restore();
 
         var bulletsLength = bullets.length;
         for (var i = 0; i < bulletsLength; i++) {
@@ -952,6 +953,7 @@ $(document).ready(function () {
         if (evt.keyCode == 38) upKey = true;
         else if (evt.keyCode == 40) downKey = true;
         if (evt.keyCode == 32) space = true;
+
     }
 
     function onKeyUp(evt) {
@@ -978,6 +980,27 @@ $(document).ready(function () {
         upKey = false;
     }
 
+    function toggleFullScreen() {
+        if ((document.fullScreenElement && document.fullScreenElement !== null) ||    // alternative standard method
+            (!document.mozFullScreen && !document.webkitIsFullScreen)) {               // current working methods
+            if (document.documentElement.requestFullScreen) {
+                document.documentElement.requestFullScreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullScreen) {
+                document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            if (document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            }
+        }
+    }
+
     $('#toggleSound').toggle(function () {
         muted = true;
         $(this).addClass('muted');
@@ -985,6 +1008,17 @@ $(document).ready(function () {
         muted = false;
         $(this).removeClass('muted');
     });
+
+    $('#toggleFullScreen').toggle(function () {
+        toggleFullScreen();
+        $(this).removeClass('fullscreen_alt');
+        $(this).addClass('fullscreen_exit_alt');
+    }, function () {
+        toggleFullScreen();
+        $(this).removeClass('fullscreen_exit_alt');
+        $(this).addClass('fullscreen_alt');
+    });
+
     function randomFromTo(from, to) {
         return Math.floor(Math.random() * (to - from + 1) + from);
     }
