@@ -376,12 +376,70 @@ body{
 canvas { display: block;
 }
 audio .sound{display: none;}
-#fps{
+.menu{
 	position: absolute;
+	font-family: Futura;
+	width: 400px;
+	left: 50%;
+	top:  50%;
+	margin-left: -200px;
+	margin-top: -200px;
 	color: #FFF;
-	top: 20px;
-	left: 40px;
-	opacity: 0.4;
+	padding: 10px;
+	border-radius: 13px;
+	background-color: rgba(255,255,255, 0.1);
+	box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.2);
+	background-clip: padding-box;
+	display: none;
+	text-align: center;
+}
+.menu .content{
+	background-color:rgba(26, 38, 42,0.7);
+	border-radius: 10px;
+	margin: 0;
+	padding: 10px;
+}
+.menu a{
+	text-decoration: none;
+}
+.menu ul{
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	margin-bottom: 20px;
+}
+.menu.start{
+	display: block;
+	text-align: center;
+}
+.menu.start .highScore{
+	color: #FFF;
+	font-size: 28px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+.menu.paused{
+	font-size: 30px;
+	text-align: center;
+}
+.menu.paused h1{
+	display: block;
+}
+.menu.gameOver h1{
+	text-transform: uppercase;
+	font-size: 30px;
+}
+.menu.gameOver .scoreIt{
+	color: #FFF;
+	font-size: 28px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+.menu.gameOver .newHighScore{
+	color: #eccd07;
+	font-size: 14px;
+	font-weight: normal;
+	display: none;
 }
 footer {
 	position: fixed;
@@ -399,12 +457,12 @@ footer {
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#2b2b2b', EndColorStr='#212121');
 	border-top: 1px solid #333;
 }
-#highScore{
+footer .highScore{
 	color: #FFF;
 	float: right;
 	height: 40px;
 	position: relative;
-	top: -152px;
+	top: -148px;
 	margin-right: 20px;
 	display: block;
 	text-shadow: 0 1px 0 #000;
@@ -445,6 +503,7 @@ footer {
 	background:rgba(131, 245, 230, 0.04);
 	border-top: 1px solid rgba(131, 245, 230, 0.08);
 	border-radius: 200px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.29);
 }
 #hud ul{
 	position: relative;

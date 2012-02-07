@@ -32,6 +32,38 @@
 </head>
 
 <body>
+  <section class="menu start">
+  	<div class="content">
+	  	<div class="highScore">0</div>
+	  	<div class="controls">
+	  	<ul>
+	  		<li>Up Arrow = Thrust</li>
+	  		<li>Left / Right Arrow = Rotate</li>
+	  		<li>Space = Fire</li>
+	  		<li>P = Pause</li>
+	  		<li>F1 = Show FPS</li>
+	  	</ul>
+	  	</div>
+	  	<a class="btn btn-large btn-info playGame">Play Game</a>
+	</div>
+  </section>
+  <section class="menu paused">
+	  <div class="content">
+	  	<h1>Paused</h1>
+	  	<h1 class="iconic pause"></h1>
+	  	<a class="btn btn-large btn-info playGame">Continue</a>
+	  </div>
+  </section>
+  <section class="menu gameOver">
+	  <div class="content">
+	  	<h1>Game Over!</h1>
+	  	<div class="scoreIt">
+	  	<span>Score:</span><span class="scored">0</span>
+	  	<div class="newHighScore">New High Score!</div>
+	  	</div>
+	  	<a class="btn btn-large btn-info playGame">Play Again</a>
+	  </div>
+  </section>
   <canvas id="myCanvas">
   		This game is not working :(
   </canvas>
@@ -78,7 +110,7 @@
   			</ul>
   		</div>
   	</div>
-  	<div id="highScore">High Score: 0</div>
+  	<div class="highScore">High Score: 0</div>
   	<div id="settings">
   	  <ul>
         <li id="toggleFullScreen" class="iconic fullscreen_alt" title="Toggle Fullscreen"></li>
