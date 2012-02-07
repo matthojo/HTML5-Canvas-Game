@@ -1,22 +1,5 @@
 // Author: Matthew Harrison-Jones
 
-// Array Remove - By John Resig (MIT Licensed)
-Array.remove = function (array, from, to) {
-
-    var rest = array.slice((to || from) + 1 || array.length);
-    array.length = from < 0 ? array.length + from : from;
-    return array.push.apply(array, rest);
-};
-
-Array.prototype.removeByValue = function (val) {
-    for (var i = 0; i < this.length; i++) {
-        if (this[i] === val) {
-            this.splice(i, 1);
-            break;
-        }
-    }
-};
-
 $(document).ready(function () {
 
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -88,6 +71,7 @@ $(document).ready(function () {
     var context = canvas.get(0).getContext("2d");
     var canvasWidth = $(window).get(0).innerWidth;
     var canvasHeight = $(window).get(0).innerHeight - footerHeight;
+    window.scrollTo(0, 0);
 
     // Game settings
     var playGame = true, muted = false;
@@ -258,7 +242,6 @@ $(document).ready(function () {
 
         var canvasWidth = $(window).get(0).innerWidth;
         var canvasHeight = $(window).get(0).innerHeight - footerHeight;
-        window.scrollTo(0, 0);
 
         if (enemies.length < numEnemies) {
             var x = Math.floor(Math.random() * canvasWidth);
