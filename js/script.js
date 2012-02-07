@@ -71,6 +71,7 @@ $(document).ready(function () {
     var context = canvas.get(0).getContext("2d");
     var canvasWidth = $(window).get(0).innerWidth;
     var canvasHeight = $(window).get(0).innerHeight - footerHeight;
+
     window.scrollTo(0, 0);
 
     // Game settings
@@ -94,21 +95,44 @@ $(document).ready(function () {
     var Star, Bullet, Powerup, Ship, ShipEnemy, Collision, Particle;
 
     Star = function (x, y) {
-        this.x = x;
-        this.y = y;
-        this.brightness = Math.floor(Math.random() * 4);
-        this.radius = Math.floor(Math.random() * 4);
+        this.settings = {
+            x:x,
+            y:y,
+            brightness:Math.floor(Math.random() * 4),
+            radius:Math.floor(Math.random() * 4)
+        };
+        this.draw = function () {
+            var brightness = 'rgba(255,255,255, 0.' + this.settings.brightness + ')';
+            context.fillStyle = brightness;
+            context.beginPath();
+            context.arc(this.settings.x, this.settings.y, this.settings.radius, 0, Math.PI * 2, true);
+            context.closePath();
+            context.fill();
+        };
     };
+
     Bullet = function (owner) {
-        this.x = owner.x;
-        this.y = owner.y;
-        this.rotation = owner.rotation;
-        this.vx = 0;
-        this.vy = 0;
-        this.speed = 10;
-        this.size = 3;
-        this.lifetime = 800;
-        this.owner = owner;
+        this.settings = {
+            x:owner.x,
+            y:owner.y,
+            rotation:owner.rotation,
+            vx:0,
+            vy:0,
+            speed:10,
+            size:3,
+            lifetime:800,
+            owner:owner
+        };
+        this.draw = function () {
+            context.translate(this.settings.x, this.settings.y);
+            context.rotate((this.settings.rotation) * Math.PI / 180);
+            context.translate(-this.settings.x, -this.settings.y);
+            context.fillStyle = '#FFF';
+            context.beginPath();
+            context.fillRect(this.settings.x, this.settings.y, this.settings.size * 4, this.settings.size);
+            context.closePath();
+            context.fill();
+        };
     };
 
     Powerup = function (x, y) {
@@ -117,61 +141,232 @@ $(document).ready(function () {
         this.size = 8;
         this.lifetime = 8000;
         this.type = randomFromTo(1, 5);
+        this.draw = function(){
+            var colour;
+            switch (this.type) {
+                case 1:
+                    colour = "255, 255, 102";
+                    context.fillStyle = "rgb(166, 182, 194)";
+                    context.font = "20px 800 Arial";
+                    context.fillText("Shield", this.x + (this.size * 1.5), this.y + (this.size / 2));
+                    break;
+                case 2:
+                    colour = "102, 255, 102";
+                    context.fillStyle = "rgb(166, 182, 194)";
+                    context.font = "20px 800 Arial";
+                    context.fillText("Health", this.x + (this.size * 1.5), this.y + (this.size / 2));
+                    break;
+                case 3:
+                    colour = "102, 255, 255";
+                    context.fillStyle = "rgb(166, 182, 194)";
+                    context.font = "20px 800 Arial";
+                    context.fillText("Increase Fire Rate", this.x + (this.size * 1.5), this.y + (this.size / 2));
+                    break;
+                case 4:
+                    colour = "255, 102, 255";
+                    context.fillStyle = "rgb(166, 182, 194)";
+                    context.font = "20px 800 Arial";
+                    context.fillText("Speed", this.x + (this.size), this.y + (this.size / 2));
+                    break;
+                case 5:
+                    colour = "255,255,255";
+                    context.fillStyle = "rgb(166, 182, 194)";
+                    context.font = "20px 800 Arial";
+                    context.fillText("Laser", this.x + (this.size), this.y + (this.size / 2));
+
+
+            }
+            var grd = context.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size * (Math.random() + 4));
+            grd.addColorStop(0, "rgba(255, 255, 255, 0)"); // light blue
+            grd.addColorStop(0.5, "rgba(255, 255, 255, 0)"); // light blue
+            grd.addColorStop(1, "rgba(" + colour + ", 0.4)"); // dark blue
+            context.fillStyle = grd;
+            context.beginPath();
+            context.arc(this.x, this.y, this.size * 4, 0, Math.PI * 2, true);
+            context.closePath();
+            context.fill();
+            context.fillStyle = "rgb(" + colour + ")";
+            context.beginPath();
+            context.arc(this.x, this.y, this.size, 0, Math.PI * 2, true);
+            context.closePath();
+            context.fill();
+        };
     };
+
     Ship = function (x, y) {
-        this.x = x;
-        this.y = y;
-        this.width = 20;
-        this.height = 20;
-        this.halfWidth = this.width / 2;
-        this.halfHeight = this.height / 2;
-        this.vx = 0;
-        this.vy = 0;
-        this.speed = 0;
-        this.defaultMaxSpeed = 4;
-        this.maxSpeed = 4;
-        this.energy = 360;
-        this.energyRate = 18;
-        this.charge = 0;
-        this.defaultChargeRate = 10;
-        this.chargeRate = 10;
-        this.health = 100;
-        this.elasticity = 1;
-        this.rotation = 0;
-        this.rotationSpeed = 2;
-        this.flying = false;
-        this.resetPowerupTime = 2000;
+        this.settings = {
+        x : x,
+        y : y,
+        width : 20,
+        height : 20,
+        halfWidth : this.width / 2,
+        halfHeight : this.height / 2,
+        vx : 0,
+        vy : 0,
+        speed : 0,
+        maxSpeed : 4,
+        energy : 360,
+        energyRate : 18,
+        charge : 0,
+        chargeRate : 10,
+        health : 100,
+        elasticity : 1,
+        rotation : 0,
+        rotationSpeed : 2,
+        flying : false,
+        resetPowerupTime: 2000
+        };
+        this.defualtSettings = {
+            defaultMaxSpeed: 4,
+            defaultChargeRate: 10
+        };
         this.shield = {active:false, powerupTime:2000, element:$(".shield")};
         this.superSpeed = {active:false, powerupTime:2000, element:$(".speed")};
         this.superFire = {active:false, powerupTime:2000, element:$(".fire")};
         this.laser = {active:false, powerupTime:2000, element:$(".laser")};
         this.level = 1;
+        this.draw = function(){
+            context.translate(this.settings.x, this.settings.y);
+            context.rotate(this.settings.rotation * Math.PI / 180);
+            context.translate(-this.settings.x, -this.settings.y);
+
+            if (this.settings.flying) {
+                context.fillStyle = "#f98224";
+                context.beginPath();
+                context.moveTo(this.settings.x - randomFromTo(this.settings.halfWidth, this.settings.width), this.settings.y); // give the (x,y) coordinates
+                context.lineTo(this.settings.x - (this.settings.halfWidth - 1), this.settings.y + (this.settings.halfHeight / 2));
+                context.lineTo(this.settings.x - (this.settings.halfWidth - 1), this.settings.y - (this.settings.halfHeight / 2));
+                context.closePath();
+                context.fill();
+            }
+            if (this.laser.active) {
+                var laserGradient = context.createLinearGradient(this.settings.settings.x + (this.settings.halfWidth), this.settings.y, this.settings.x + (this.settings.halfWidth - 1) + 400, this.settings.y + 2);
+                laserGradient.addColorStop(1, 'rgba(255, 136, 136, 0)');
+                laserGradient.addColorStop(0, 'rgba(255, 136, 136, 0.5)');
+                context.fillStyle = laserGradient;
+                context.fillRect(this.settings.x + (this.settings.halfWidth - 1), this.settings.y, 400, 2);
+                context.fill();
+            }
+            context.fillStyle = "#fff";
+            context.beginPath();
+            context.moveTo(this.settings.x + this.settings.halfWidth, this.settings.y); // give the (x,y) coordinates
+            context.lineTo(this.settings.x - this.settings.halfWidth, this.settings.y - this.settings.halfHeight);
+            context.lineTo(this.settings.x - this.settings.halfWidth, this.settings.y + this.settings.halfHeight);
+            context.closePath();
+            context.fill();
+
+            //energy
+            context.lineWidth = 10;
+            context.strokeStyle = "rgba(102, 204, 255, 0.4)"; // stroke color
+            context.beginPath();
+            context.arc(this.settings.x, this.settings.y, 40, 0, this.settings.energy * Math.PI / 180, false);
+            context.stroke();
+
+            //health
+            context.lineWidth = 10;
+            if (this.settings.health > 50) context.strokeStyle = "rgba(102, 204, 119, 0.4)"; // stroke color
+            else if (this.settings.health <= 50 && this.settings.health > 25) context.strokeStyle = "rgba(252, 204, 119, 0.4)"; // stroke color
+            else if (this.settings.health < 25) context.strokeStyle = "rgba(252, 71, 119, 0.4)"; // stroke color
+            context.beginPath();
+            context.arc(this.settings.x, this.settings.y, 30, 0, (this.settings.health * 3.6) * Math.PI / 180, false);
+            context.stroke();
+
+            if (this.shield.powerupTime > 0 && this.shield.active) this.shield.powerupTime--;
+            else if (this.shield.powerupTime <= 0) resetPowerup(this, 1);
+
+            if (this.superSpeed.powerupTime > 0 && this.superSpeed.active) this.superSpeed.powerupTime--;
+            else if (this.superSpeed.powerupTime <= 0) resetPowerup(this, 4);
+
+            if (this.superFire.powerupTime > 0 && this.superFire.active) this.superFire.powerupTime--;
+            else if (this.superFire.powerupTime <= 0) resetPowerup(this, 3);
+
+            if (this.laser.powerupTime > 0 && this.laser.active) this.laser.powerupTime--;
+            else if (this.laser.powerupTime <= 0) resetPowerup(this, 5);
+            //else resetPowerups(this);
+
+            if (this.shield.active) {
+                var grd = context.createRadialGradient(this.settings.x, this.settings.y, 1, this.settings.x, this.settings.y, this.settings.width * (Math.random() + 4));
+                grd.addColorStop(0, "rgba(255, 255, 255, 0)"); // light blue
+                grd.addColorStop(0.5, "rgba(255, 255, 255, 0)"); // light blue
+                grd.addColorStop(1, "rgba(255,255,255, 0.4)"); // dark blue
+                context.fillStyle = grd;
+                context.beginPath();
+                context.arc(this.settings.x, this.settings.y, this.settings.width * 4, 0, Math.PI * 2, true);
+                context.closePath();
+                context.fill();
+            }
+
+        };
+        this.reset = function(){
+            this.settings.x = 150;
+            this.settings.y = canvas.height() / 2;
+            this.settings.vx = 0;
+            this.settings.vy = 0;
+            this.settings.health = 100;
+            resetPowerups(this);
+        }
     };
 
     ShipEnemy = function (x, y) {
-        this.x = x;
-        this.y = y;
-        this.width = 20;
-        this.height = 20;
-        this.halfWidth = this.width / 2;
-        this.halfHeight = this.height / 2;
-        this.vx = 0;
-        this.vy = 0;
-        this.speed = 0;
-        this.defaultMaxSpeed = 2;
-        this.maxSpeed = 2;
-        this.energy = 360;
-        this.energyRate = 18;
-        this.charge = 0;
-        this.chargeRate = 10;
-        this.defaultChargeRate = 10;
-        this.health = 10;
-        this.reactionTime = 20;
-        this.accuracy = 20;
-        this.elasticity = 1;
-        this.rotation = 0;
-        this.rotationSpeed = 4;
-        this.flying = false
+        this.settings = {
+        x : x,
+        y : y,
+        width : 20,
+        height : 20,
+        halfWidth : this.width / 2,
+        halfHeight : this.height / 2,
+        vx : 0,
+        vy : 0,
+        speed : 0,
+        defaultMaxSpeed : 2,
+        maxSpeed : 2,
+        energy : 360,
+        energyRate : 18,
+        charge : 0,
+        chargeRate : 10,
+        defaultChargeRate : 10,
+        health : 10,
+        reactionTime : 20,
+        accuracy : 20,
+        elasticity : 1,
+        rotation : 0,
+        rotationSpeed : 4,
+        flying : false
+        };
+        this.draw = function(){
+            context.translate(this.settings.x, this.settings.y);
+            context.rotate(this.settings.rotation * Math.PI / 180);
+            context.translate(-this.settings.x, -this.settings.y);
+
+            // Draw ship
+            if (this.settings.flying) {
+                context.fillStyle = "#f98224";
+                context.beginPath();
+                context.moveTo(this.settings.x - randomFromTo(this.settings.halfWidth, this.settings.width), this.y); // give the (x,y) coordinates
+                context.lineTo(this.x - (this.halfWidth - 1), this.y + (this.halfHeight / 2));
+                context.lineTo(this.x - (this.halfWidth - 1), this.y - (this.halfHeight / 2));
+                context.closePath();
+                context.fill();
+            }
+            context.fillStyle = "rgb(166, 182, 194)";
+            context.beginPath();
+            context.moveTo(this.x + this.halfWidth, this.y); // give the (x,y) coordinates
+            context.lineTo(this.x - this.halfWidth, this.y - this.halfHeight);
+            context.lineTo(this.x - this.halfWidth, this.y + this.halfHeight);
+            context.closePath();
+            context.fill();
+            context.lineWidth = 10;
+            context.strokeStyle = "rgba(102, 204, 255, 0.4)"; // stroke color
+            context.beginPath();
+            context.arc(this.x, this.y, 40, 0, this.energy * Math.PI / 180, false);
+            context.stroke();
+
+            context.translate(this.x + (this.halfWidth / 2), this.y + (this.halfHeight / 2));
+            context.rotate(90 * Math.PI / 180);
+            context.translate(-this.x + (this.halfWidth / 2), -this.y + (this.halfHeight / 2));
+            context.font = "20px 800 Arial";
+            context.fillText("Enemy", this.x + (this.halfWidth / 2), this.y + (this.halfHeight / 2));
+        };
     };
 
     Collision = function(x,y, direction){
@@ -193,6 +388,16 @@ $(document).ready(function () {
         this.size = Math.floor(randomFromTo(2, 4));
         this.lifetime = owner.lifetime;
         this.owner = owner;
+        this.draw = function(){
+            context.translate(this.x, this.y);
+            context.rotate((this.rotation) * Math.PI / 180);
+            context.translate(-this.x, -this.y);
+            context.fillStyle = '#FFF';
+            context.beginPath();
+            context.fillRect(this.x, this.y, this.size , this.size);
+            context.closePath();
+            context.fill();
+        };
     };
 
     stars = new Array();
@@ -211,7 +416,7 @@ $(document).ready(function () {
     }
 
     enemies = new Array();
-    numEnemies = 1;
+    numEnemies = 10;
 
     for (var i = 0; i < numEnemies; i++) {
         var x = Math.floor(Math.random() * canvasWidth);
@@ -243,6 +448,9 @@ $(document).ready(function () {
         var canvasWidth = $(window).get(0).innerWidth;
         var canvasHeight = $(window).get(0).innerHeight - footerHeight;
 
+        canvas.attr("width", canvasWidth);
+        canvas.attr("height", canvasHeight);
+
         if (enemies.length < numEnemies) {
             var x = Math.floor(Math.random() * canvasWidth);
             var y = Math.floor(Math.random() * canvasHeight);
@@ -265,24 +473,17 @@ $(document).ready(function () {
         }
         if (powerupCharge < powerupChargeMax && numPowerups != maxNumPowerups) powerupCharge += powerupChargeRate;
 
-        canvas.attr("width", canvasWidth);
-        canvas.attr("height", canvasHeight);
-
         context.save();
-        //context.fillStyle = '#12141A';
         context.clearRect(0, 0, canvas.width(), canvas.height());
         context.restore();
 
-        // 1 - apply velocity to position (vx -> x)
-        //ship.x += ship.vx;
-        //ship.y += ship.vy;
         if (touchable) {
             if (touches.length > 0) {
                 var touch = touches[0];
-                if (touch.clientY != ship.y && touch.clientX != ship.x) {
-                    ship.rotation = Math.atan2(
-                        touch.clientY - ship.y,
-                        touch.clientX - ship.x
+                if (touch.clientY != ship.settings.y && touch.clientX != ship.settings.x) {
+                    ship.settings.rotation = Math.atan2(
+                        touch.clientY - ship.settings.y,
+                        touch.clientX - ship.settings.x
                     ) * 180 / Math.PI;
                 }
                 if (touches.length >= 2) {
@@ -294,27 +495,27 @@ $(document).ready(function () {
             }
         }
         if (rightKey) {
-            ship.rotation += ship.rotationSpeed;
+            ship.settings.rotation += ship.settings.rotationSpeed;
         }
         if (leftKey) {
-            ship.rotation -= ship.rotationSpeed;
+            ship.settings.rotation -= ship.settings.rotationSpeed;
         }
         if (upKey) {
-            if (ship.speed < ship.maxSpeed) {
-                ship.speed += 0.5;
+            if (ship.settings.speed < ship.settings.maxSpeed) {
+                ship.settings.speed += 0.5;
                 if (!muted) {
                     // Need better thrusters sound.
                     //thrustersSound.currentTime = 0;
                     //thrustersSound.play();
                 }
             }
-            ship.vy = Math.sin(ship.rotation * Math.PI / 180) * ship.speed;
-            ship.vx = Math.cos(ship.rotation * Math.PI / 180) * ship.speed;
-            ship.flying = true;
+            ship.settings.vy = Math.sin(ship.settings.rotation * Math.PI / 180) * ship.settings.speed;
+            ship.settings.vx = Math.cos(ship.settings.rotation * Math.PI / 180) * ship.settings.speed;
+            ship.settings.flying = true;
         } else {
-            ship.vy = 0;
-            ship.vx = 0;
-            ship.speed = 1;
+            ship.settings.vy = 0;
+            ship.settings.vx = 0;
+            ship.settings.speed = 1;
         }
         if (space) {
             shoot(ship);
@@ -322,161 +523,55 @@ $(document).ready(function () {
             regen(ship);
         }
 
-        ship.x += ship.vx;
-        ship.y += ship.vy;
+        ship.settings.x += ship.settings.vx;
+        ship.settings.y += ship.settings.vy;
 
         if (!muted) {
-            if (ship.rotation > 360) ship.rotation = 0;
-            if (ship.rotation < 0) ship.rotation = 360;
+            if (ship.settings.rotation > 360) ship.settings.rotation = 0;
+            if (ship.settings.rotation < 0) ship.settings.rotation = 360;
         }
-        if (ship.y >= canvasHeight - ship.halfHeight) {
-            ship.y = canvasHeight - ship.halfHeight;
-            ship.vy = -Math.abs(ship.vy);
-            ship.vy *= ship.elasticity;
+        if (ship.settings.y >= canvasHeight - ship.settings.halfHeight) {
+            ship.settings.y = canvasHeight - ship.settings.halfHeight;
+            ship.settings.vy = -Math.abs(ship.settings.vy);
+            ship.settings.vy *= ship.settings.elasticity;
         }
-        if (ship.x >= canvasWidth - ship.halfWidth) {
-            ship.x = canvasWidth - ship.halfWidth;
-            ship.vx = -Math.abs(ship.vx);
-            ship.vx *= ship.elasticity;
+        if (ship.settings.x >= canvasWidth - ship.settings.halfWidth) {
+            ship.settings.x = canvasWidth - ship.settings.halfWidth;
+            ship.settings.vx = -Math.abs(ship.settings.vx);
+            ship.settings.vx *= ship.settings.elasticity;
         }
-        if (ship.y <= 0 + ship.halfHeight) {
-            ship.y = 0 + ship.halfHeight;
-            ship.vy = +Math.abs(ship.vy);
-            ship.vy *= ship.elasticity;
+        if (ship.settings.y <= 0 + ship.settings.halfHeight) {
+            ship.settings.y = 0 + ship.settings.halfHeight;
+            ship.settings.vy = +Math.abs(ship.settings.vy);
+            ship.settings.vy *= ship.settings.elasticity;
         }
-        if (ship.x <= 0 + ship.halfWidth) {
-            ship.x = 0 + ship.halfWidth;
-            ship.vx = +Math.abs(ship.vx);
-            ship.vx *= ship.elasticity;
+        if (ship.settings.x <= 0 + ship.settings.halfWidth) {
+            ship.settings.x = 0 + ship.settings.halfWidth;
+            ship.settings.vx = +Math.abs(ship.settings.vx);
+            ship.settings.vx *= ship.settings.elasticity;
         }
 
         // Draw ship
         context.save();
-        context.translate(ship.x, ship.y);
-        context.rotate(ship.rotation * Math.PI / 180);
-        context.translate(-ship.x, -ship.y);
-
-        if (ship.flying) {
-            context.fillStyle = "#f98224";
-            context.beginPath();
-            //context.arc(0, 0, 2, 0, Math.PI * 2, true);
-            context.moveTo(ship.x - randomFromTo(ship.halfWidth, ship.width), ship.y); // give the (x,y) coordinates
-            context.lineTo(ship.x - (ship.halfWidth - 1), ship.y + (ship.halfHeight / 2));
-            context.lineTo(ship.x - (ship.halfWidth - 1), ship.y - (ship.halfHeight / 2));
-            context.closePath();
-            context.fill();
-        }
-        if (ship.laser.active) {
-            var laserGradient = context.createLinearGradient(ship.x + (ship.halfWidth), ship.y, ship.x + (ship.halfWidth - 1) + 400, ship.y + 2);
-            laserGradient.addColorStop(1, 'rgba(255, 136, 136, 0)');
-            laserGradient.addColorStop(0, 'rgba(255, 136, 136, 0.5)');
-            context.fillStyle = laserGradient;
-            context.fillRect(ship.x + (ship.halfWidth - 1), ship.y, 400, 2);
-            context.fill();
-        }
-        context.fillStyle = "#fff";
-        context.beginPath();
-        context.moveTo(ship.x + ship.halfWidth, ship.y); // give the (x,y) coordinates
-        context.lineTo(ship.x - ship.halfWidth, ship.y - ship.halfHeight);
-        context.lineTo(ship.x - ship.halfWidth, ship.y + ship.halfHeight);
-        context.closePath();
-        context.fill();
-
-        //energy
-        context.lineWidth = 10;
-        context.strokeStyle = "rgba(102, 204, 255, 0.4)"; // stroke color
-        context.beginPath();
-        context.arc(ship.x, ship.y, 40, 0, ship.energy * Math.PI / 180, false);
-        context.stroke();
-
-        //health
-        context.lineWidth = 10;
-        if (ship.health > 50) context.strokeStyle = "rgba(102, 204, 119, 0.4)"; // stroke color
-        else if (ship.health <= 50 && ship.health > 25) context.strokeStyle = "rgba(252, 204, 119, 0.4)"; // stroke color
-        else if (ship.health < 25) context.strokeStyle = "rgba(252, 71, 119, 0.4)"; // stroke color
-        context.beginPath();
-        context.arc(ship.x, ship.y, 30, 0, (ship.health * 3.6) * Math.PI / 180, false);
-        context.stroke();
-
-        if (ship.shield.powerupTime > 0 && ship.shield.active) ship.shield.powerupTime--;
-        else if (ship.shield.powerupTime <= 0) resetPowerup(ship, 1);
-
-        if (ship.superSpeed.powerupTime > 0 && ship.superSpeed.active) ship.superSpeed.powerupTime--;
-        else if (ship.superSpeed.powerupTime <= 0) resetPowerup(ship, 4);
-
-        if (ship.superFire.powerupTime > 0 && ship.superFire.active) ship.superFire.powerupTime--;
-        else if (ship.superFire.powerupTime <= 0) resetPowerup(ship, 3);
-
-        if (ship.laser.powerupTime > 0 && ship.laser.active) ship.laser.powerupTime--;
-        else if (ship.laser.powerupTime <= 0) resetPowerup(ship, 5);
-        //else resetPowerups(ship);
-
-        if (ship.shield.active) {
-            var grd = context.createRadialGradient(ship.x, ship.y, 1, ship.x, ship.y, ship.width * (Math.random() + 4));
-            grd.addColorStop(0, "rgba(255, 255, 255, 0)"); // light blue
-            grd.addColorStop(0.5, "rgba(255, 255, 255, 0)"); // light blue
-            grd.addColorStop(1, "rgba(255,255,255, 0.4)"); // dark blue
-            context.fillStyle = grd;
-            context.beginPath();
-            context.arc(ship.x, ship.y, ship.width * 4, 0, Math.PI * 2, true);
-            context.closePath();
-            context.fill();
-        }
-
+        ship.draw();
         context.restore();
 
         var enemyLength = enemies.length;
         for (var i = 0; i < enemyLength; i++) {
             var tmpEnemy = enemies[i];
-            context.save();
-            context.translate(tmpEnemy.x, tmpEnemy.y);
-            context.rotate(tmpEnemy.rotation * Math.PI / 180);
-            context.translate(-tmpEnemy.x, -tmpEnemy.y);
-
-            // Draw ship
-            if (tmpEnemy.flying) {
-                context.fillStyle = "#f98224";
-                context.beginPath();
-                context.moveTo(tmpEnemy.x - randomFromTo(tmpEnemy.halfWidth, tmpEnemy.width), tmpEnemy.y); // give the (x,y) coordinates
-                context.lineTo(tmpEnemy.x - (tmpEnemy.halfWidth - 1), tmpEnemy.y + (tmpEnemy.halfHeight / 2));
-                context.lineTo(tmpEnemy.x - (tmpEnemy.halfWidth - 1), tmpEnemy.y - (tmpEnemy.halfHeight / 2));
-                context.closePath();
-                context.fill();
+            if(tmpEnemy) {
+                context.save();
+                tmpEnemy.draw();
+                context.restore();
+                animateEnemy(tmpEnemy);
             }
-            context.fillStyle = "rgb(166, 182, 194)";
-            context.beginPath();
-            context.moveTo(tmpEnemy.x + tmpEnemy.halfWidth, tmpEnemy.y); // give the (x,y) coordinates
-            context.lineTo(tmpEnemy.x - tmpEnemy.halfWidth, tmpEnemy.y - tmpEnemy.halfHeight);
-            context.lineTo(tmpEnemy.x - tmpEnemy.halfWidth, tmpEnemy.y + tmpEnemy.halfHeight);
-            context.closePath();
-            context.fill();
-            context.lineWidth = 10;
-            context.strokeStyle = "rgba(102, 204, 255, 0.4)"; // stroke color
-            context.beginPath();
-            context.arc(tmpEnemy.x, tmpEnemy.y, 40, 0, tmpEnemy.energy * Math.PI / 180, false);
-            context.stroke();
-
-            context.translate(tmpEnemy.x + (tmpEnemy.halfWidth / 2), tmpEnemy.y + (tmpEnemy.halfHeight / 2));
-            context.rotate(90 * Math.PI / 180);
-            context.translate(-tmpEnemy.x + (tmpEnemy.halfWidth / 2), -tmpEnemy.y + (tmpEnemy.halfHeight / 2));
-            context.font = "20px 800 Arial";
-            context.fillText("Enemy", tmpEnemy.x + (tmpEnemy.halfWidth / 2), tmpEnemy.y + (tmpEnemy.halfHeight / 2));
-
-            context.restore();
-            animateEnemy(tmpEnemy);
         }
-
+        
         var starsLength = stars.length;
         context.save();
         for (var i = 0; i < starsLength; i++) {
             var tmpStar = stars[i];
-            //context.translate(tmpStar.x, tmpStar.y);
-            var brightness = 'rgba(255,255,255, 0.' + tmpStar.brightness + ')';
-            context.fillStyle = brightness;
-            context.beginPath();
-            context.arc(tmpStar.x, tmpStar.y, tmpStar.radius, 0, Math.PI * 2, true);
-            context.closePath();
-            context.fill();
+            tmpStar.draw();
         }
         context.restore();
 
@@ -486,54 +581,7 @@ $(document).ready(function () {
         for (var i = 0; i < powerupsLength; i++) {
             var tmpPowerup = powerups[i];
             //context.translate(tmpStar.x, tmpStar.y);
-            var colour;
-            switch (tmpPowerup.type) {
-                case 1:
-                    colour = "255, 255, 102";
-                    context.fillStyle = "rgb(166, 182, 194)";
-                    context.font = "20px 800 Arial";
-                    context.fillText("Shield", tmpPowerup.x + (tmpPowerup.size * 1.5), tmpPowerup.y + (tmpPowerup.size / 2));
-                    break;
-                case 2:
-                    colour = "102, 255, 102";
-                    context.fillStyle = "rgb(166, 182, 194)";
-                    context.font = "20px 800 Arial";
-                    context.fillText("Health", tmpPowerup.x + (tmpPowerup.size * 1.5), tmpPowerup.y + (tmpPowerup.size / 2));
-                    break;
-                case 3:
-                    colour = "102, 255, 255";
-                    context.fillStyle = "rgb(166, 182, 194)";
-                    context.font = "20px 800 Arial";
-                    context.fillText("Increase Fire Rate", tmpPowerup.x + (tmpPowerup.size * 1.5), tmpPowerup.y + (tmpPowerup.size / 2));
-                    break;
-                case 4:
-                    colour = "255, 102, 255";
-                    context.fillStyle = "rgb(166, 182, 194)";
-                    context.font = "20px 800 Arial";
-                    context.fillText("Speed", tmpPowerup.x + (tmpPowerup.size), tmpPowerup.y + (tmpPowerup.size / 2));
-                    break;
-                case 5:
-                    colour = "255,255,255";
-                    context.fillStyle = "rgb(166, 182, 194)";
-                    context.font = "20px 800 Arial";
-                    context.fillText("Laser", tmpPowerup.x + (tmpPowerup.size), tmpPowerup.y + (tmpPowerup.size / 2));
-
-
-            }
-            var grd = context.createRadialGradient(tmpPowerup.x, tmpPowerup.y, 1, tmpPowerup.x, tmpPowerup.y, tmpPowerup.size * (Math.random() + 4));
-            grd.addColorStop(0, "rgba(255, 255, 255, 0)"); // light blue
-            grd.addColorStop(0.5, "rgba(255, 255, 255, 0)"); // light blue
-            grd.addColorStop(1, "rgba(" + colour + ", 0.4)"); // dark blue
-            context.fillStyle = grd;
-            context.beginPath();
-            context.arc(tmpPowerup.x, tmpPowerup.y, tmpPowerup.size * 4, 0, Math.PI * 2, true);
-            context.closePath();
-            context.fill();
-            context.fillStyle = "rgb(" + colour + ")";
-            context.beginPath();
-            context.arc(tmpPowerup.x, tmpPowerup.y, tmpPowerup.size, 0, Math.PI * 2, true);
-            context.closePath();
-            context.fill();
+            tmpPowerup.draw();
             animatePowerup(tmpPowerup);
         }
         context.restore();
@@ -544,14 +592,7 @@ $(document).ready(function () {
             try {
                 if (tmpBullet) {
                     context.save();
-                    context.translate(tmpBullet.x, tmpBullet.y);
-                    context.rotate((tmpBullet.rotation) * Math.PI / 180);
-                    context.translate(-tmpBullet.x, -tmpBullet.y);
-                    context.fillStyle = '#FFF';
-                    context.beginPath();
-                    context.fillRect(tmpBullet.x, tmpBullet.y, tmpBullet.size * 4, tmpBullet.size);
-                    context.closePath();
-                    context.fill();
+                    tmpBullet.draw();
                     context.restore();
                     animateBullet(tmpBullet, i);
                 }
@@ -568,14 +609,7 @@ $(document).ready(function () {
                 for(var i = 0; i < particles.length; i++){
                     var tmpParticle = particles[i];
                     context.save();
-                    context.translate(tmpParticle.x, tmpParticle.y);
-                    context.rotate((tmpParticle.rotation) * Math.PI / 180);
-                    context.translate(-tmpParticle.x, -tmpParticle.y);
-                    context.fillStyle = '#FFF';
-                    context.beginPath();
-                    context.fillRect(tmpParticle.x, tmpParticle.y, tmpParticle.size , tmpParticle.size);
-                    context.closePath();
-                    context.fill();
+                    tmpParticle.draw();
                     context.restore();
                     animateParticle(tmpParticle, i);
                 }
@@ -583,32 +617,23 @@ $(document).ready(function () {
             animateCollision(tmpCollision);
         }
 
-        ship.flying = false;
-    }
-
-    function resetPlayer(player) {
-        player.x = 150;
-        player.y = canvas.height() / 2;
-        player.vx = 0;
-        player.vy = 0;
-        player.health = 100;
-        resetPowerups(player);
+        ship.settings.flying = false;
     }
 
     function resetPowerups(player) {
         player.shield.active = false;
-        player.shield.powerupTime = ship.resetPowerupTime;
+        player.shield.powerupTime = ship.settings.resetPowerupTime;
         player.shield.element.removeClass('active');
         player.superSpeed.active = false;
-        player.superSpeed.powerupTime = ship.resetPowerupTime;
+        player.superSpeed.powerupTime = ship.settings.resetPowerupTime;
         player.superSpeed.element.removeClass('active');
         player.superFire.active = false;
-        player.superFire.powerupTime = ship.resetPowerupTime;
+        player.superFire.powerupTime = ship.settings.resetPowerupTime;
         player.superFire.element.removeClass('active');
-        player.chargeRate = player.defaultChargeRate;
-        player.maxSpeed = player.defaultMaxSpeed;
+        player.chargeRate = player.defualtSettings.defaultChargeRate;
+        player.maxSpeed = player.defualtSettings.defaultMaxSpeed;
         player.laser.active = false;
-        player.laser.powerupTime = ship.resetPowerupTime;
+        player.laser.powerupTime = ship.settings.resetPowerupTime;
         player.laser.element.removeClass('active');
     }
 
@@ -616,7 +641,7 @@ $(document).ready(function () {
         switch (powerup) {
             case 1:
                 player.shield.active = false;
-                player.shield.powerupTime = ship.resetPowerupTime;
+                player.shield.powerupTime = ship.settings.resetPowerupTime;
                 player.shield.element.removeClass('active');
                 break;
             case 2:
@@ -624,19 +649,19 @@ $(document).ready(function () {
                 break;
             case 3:
                 player.superFire.active = false;
-                player.superFire.powerupTime = ship.resetPowerupTime;
-                player.chargeRate = player.defaultChargeRate;
+                player.superFire.powerupTime = ship.settings.resetPowerupTime;
+                player.chargeRate = player.defualtSettings.defaultChargeRate;
                 player.superFire.element.removeClass('active');
                 break;
             case 4:
                 player.superSpeed.active = false;
-                player.superSpeed.powerupTime = ship.resetPowerupTime;
-                player.maxSpeed = player.defaultMaxSpeed;
+                player.superSpeed.powerupTime = ship.settings.resetPowerupTime;
+                player.maxSpeed = player.defualtSettings.defaultMaxSpeed;
                 player.superSpeed.element.removeClass('active');
                 break;
             case 5:
                 player.laser.active = false;
-                player.laser.powerupTime = ship.resetPowerupTime;
+                player.laser.powerupTime = ship.settings.resetPowerupTime;
                 player.laser.element.removeClass('active');
                 break;
 
@@ -645,27 +670,27 @@ $(document).ready(function () {
 
     function animateEnemy(tmpEnemy) {
 
-        //tmpEnemy.rotation += (Math.random()*1)/ 2;
+        //tmpEnemy.settings.rotation += (Math.random()*1)/ 2;
 
-        if (tmpEnemy.y >= canvasHeight - tmpEnemy.halfHeight) {
-            tmpEnemy.y = canvasHeight - tmpEnemy.halfHeight;
-            tmpEnemy.rotation += 40;
+        if (tmpEnemy.settings.y >= canvasHeight - tmpEnemy.settings.halfHeight) {
+            tmpEnemy.settings.y = canvasHeight - tmpEnemy.settings.halfHeight;
+            tmpEnemy.settings.rotation += 40;
         }
-        if (tmpEnemy.x >= canvasWidth - tmpEnemy.halfWidth) {
-            tmpEnemy.x = canvasWidth - tmpEnemy.halfWidth;
-            tmpEnemy.rotation += 40;
+        if (tmpEnemy.settings.x >= canvasWidth - tmpEnemy.settings.halfWidth) {
+            tmpEnemy.settings.x = canvasWidth - tmpEnemy.settings.halfWidth;
+            tmpEnemy.settings.rotation += 40;
         }
-        if (tmpEnemy.y <= 0 + tmpEnemy.halfHeight) {
-            tmpEnemy.y = 0 + tmpEnemy.halfHeight;
-            tmpEnemy.rotation += 40;
+        if (tmpEnemy.settings.y <= 0 + tmpEnemy.settings.halfHeight) {
+            tmpEnemy.settings.y = 0 + tmpEnemy.settings.halfHeight;
+            tmpEnemy.settings.rotation += 40;
         }
-        if (tmpEnemy.x <= 0 + tmpEnemy.halfWidth) {
-            tmpEnemy.x = 0 + tmpEnemy.halfWidth;
-            tmpEnemy.rotation += 40;
+        if (tmpEnemy.settings.x <= 0 + tmpEnemy.settings.halfWidth) {
+            tmpEnemy.settings.x = 0 + tmpEnemy.settings.halfWidth;
+            tmpEnemy.settings.rotation += 40;
         }
 
-        var dx = ship.x - tmpEnemy.x;
-        var dy = ship.y - tmpEnemy.y;
+        var dx = ship.settings.x - tmpEnemy.settings.x;
+        var dy = ship.settings.y - tmpEnemy.settings.y;
         var distance = Math.sqrt((dx * dx) + (dy * dy));
 
         if (numEnemies > 1) {
@@ -673,60 +698,60 @@ $(document).ready(function () {
                 var dxTwo, dyTwo, distanceTwo;
                 var tmpEnemyTwo = enemies[i];
                 if (tmpEnemyTwo != tmpEnemy) {
-                    dxTwo = tmpEnemyTwo.x - tmpEnemy.x;
-                    dyTwo = tmpEnemyTwo.y - tmpEnemy.y;
+                    dxTwo = tmpEnemy.settings.x - tmpEnemy.settings.x;
+                    dyTwo = tmpEnemy.settings.y - tmpEnemy.settings.y;
                     distanceTwo = Math.sqrt((dxTwo * dxTwo) + (dyTwo * dyTwo));
                     var randomOption = Math.floor(Math.random() * 10);
-                    if (distanceTwo < tmpEnemyTwo.width) {
-                        tmpEnemy.x -= randomOption;
-                        tmpEnemy.y -= randomOption;
+                    if (distanceTwo < tmpEnemy.settings.width) {
+                        tmpEnemy.settings.x -= randomOption;
+                        tmpEnemy.settings.y -= randomOption;
                     }
                 }
             }
         }
-        if (distance <= (ship.width * 4) && ship.shield.active) {
-            tmpEnemy.x -= tmpEnemy.halfWidth;
-            tmpEnemy.y -= tmpEnemy.halfHeight;
-            tmpEnemy.speed = 0.5;
-            if(tmpEnemy.energy > 0){
+        if (distance <= (ship.settings.width * 4) && ship.shield.active) {
+            tmpEnemy.settings.x -= tmpEnemy.settings.halfWidth;
+            tmpEnemy.settings.y -= tmpEnemy.settings.halfHeight;
+            tmpEnemy.settings.speed = 0.5;
+            if(tmpEnemy.settings.energy > 0){
                 shoot(tmpEnemy);
             }
             else {
                 regen(tmpEnemy);
             }
 
-            tmpEnemy.flying = false;
+            tmpEnemy.settings.flying = false;
         } else
-        if (distance < ship.width + tmpEnemy.halfWidth) {
+        if (distance < ship.settings.width + tmpEnemy.settings.halfWidth) {
             //playGame = false;
-            tmpEnemy.x += 0;
-            tmpEnemy.y += 0;
-            tmpEnemy.speed = 0;
+            tmpEnemy.settings.x += 0;
+            tmpEnemy.settings.y += 0;
+            tmpEnemy.settings.speed = 0;
 
-            if(tmpEnemy.energy > 0){
+            if(tmpEnemy.settings.energy > 0){
                 shoot(tmpEnemy);
             }
             else {
                 regen(tmpEnemy);
             }
 
-            tmpEnemy.flying = false;
-            if (ship.superSpeed.active && ship.speed == ship.maxSpeed) destroy(tmpEnemy, ship);
+            tmpEnemy.settings.flying = false;
+            if (ship.superSpeed.active && ship.settings.speed == ship.settings.maxSpeed) destroy(tmpEnemy, ship);
 
         } else {
-            if (tmpEnemy.speed < tmpEnemy.maxSpeed) {
-                tmpEnemy.speed += 0.5;
+            if (tmpEnemy.settings.speed < tmpEnemy.settings.maxSpeed) {
+                tmpEnemy.settings.speed += 0.5;
             }
             // set distance to 0 for now, so constantly tracking
             if (distance > 0) {
-                tmpEnemy.rotation = Math.atan2(
-                    randomFromTo(ship.y - tmpEnemy.reactionTime, (ship.y - tmpEnemy.reactionTime) + tmpEnemy.accuracy) - tmpEnemy.y,
-                    randomFromTo(ship.x - tmpEnemy.reactionTime, (ship.x - tmpEnemy.reactionTime) + tmpEnemy.accuracy) - tmpEnemy.x
+                tmpEnemy.settings.rotation = Math.atan2(
+                    randomFromTo(ship.settings.y - tmpEnemy.settings.reactionTime, (ship.settings.y - tmpEnemy.settings.reactionTime) + tmpEnemy.settings.accuracy) - tmpEnemy.settings.y,
+                    randomFromTo(ship.settings.x - tmpEnemy.settings.reactionTime, (ship.settings.x - tmpEnemy.settings.reactionTime) + tmpEnemy.settings.accuracy) - tmpEnemy.settings.x
                 ) * 180 / Math.PI;
 
-                tmpEnemy.flying = true;
-                tmpEnemy.vy = Math.sin(tmpEnemy.rotation * Math.PI / 180) * tmpEnemy.speed;
-                tmpEnemy.vx = Math.cos(tmpEnemy.rotation * Math.PI / 180) * tmpEnemy.speed;
+                tmpEnemy.settings.flying = true;
+                tmpEnemy.settings.vy = Math.sin(tmpEnemy.settings.rotation * Math.PI / 180) * tmpEnemy.settings.speed;
+                tmpEnemy.settings.vx = Math.cos(tmpEnemy.settings.rotation * Math.PI / 180) * tmpEnemy.settings.speed;
 
                 if (distance < 200) {
                     shoot(tmpEnemy);
@@ -734,8 +759,8 @@ $(document).ready(function () {
                     regen(tmpEnemy);
                 }
             }
-            tmpEnemy.x += tmpEnemy.vx;
-            tmpEnemy.y += tmpEnemy.vy;
+            tmpEnemy.settings.x += tmpEnemy.settings.vx;
+            tmpEnemy.settings.y += tmpEnemy.settings.vy;
         }
         if (numEnemies < enemies.length) removeEnemy(tmpEnemy);
 
@@ -743,40 +768,40 @@ $(document).ready(function () {
 
     function animateBullet(bullet, i) {
 
-        if (bullet.lifetime <= 0) {
+        if (bullet.settings.lifetime <= 0) {
             bullets.removeByValue(bullet);
         }
-        else if (bullet.lifetime > 0) bullet.lifetime = bullet.lifetime - 10;
+        else if (bullet.settings.lifetime > 0) bullet.settings.lifetime = bullet.settings.lifetime - 10;
 
-        if (bullets.y >= canvasHeight - bullets.size) {
+        if (bullet.settings.y >= canvasHeight - bullet.settings.size) {
             bullets.removeByValue(bullet);
         }
-        if (bullets.x >= canvasWidth - bullets.size) {
+        if (bullet.settings.x >= canvasWidth - bullet.settings.size) {
             bullets.removeByValue(bullet);
         }
-        if (bullets.y <= 0 + bullets.size) {
+        if (bullet.settings.y <= 0 + bullet.settings.size) {
             bullets.removeByValue(bullet);
         }
-        if (bullets.x <= 0 + bullets.size) {
+        if (bullet.settings.x <= 0 + bullet.settings.size) {
             bullets.removeByValue(bullet);
         }
 
-        bullet.vy = Math.sin(bullet.rotation * Math.PI / 180) * bullet.speed;
-        bullet.vx = Math.cos(bullet.rotation * Math.PI / 180) * bullet.speed;
+        bullet.settings.vy = Math.sin(bullet.settings.rotation * Math.PI / 180) * bullet.settings.speed;
+        bullet.settings.vx = Math.cos(bullet.settings.rotation * Math.PI / 180) * bullet.settings.speed;
 
-        bullet.x += bullet.vx;
-        bullet.y += bullet.vy;
+        bullet.settings.x += bullet.settings.vx;
+        bullet.settings.y += bullet.settings.vy;
 
         var dx, dy, distance;
-        if (bullet.owner == ship) {
+        if (bullet.settings.owner == ship) {
             for (i = 0; i < enemies.length; i++) {
                 var tmpEnemy = enemies[i];
 
-                dx = tmpEnemy.x - bullet.x;
-                dy = tmpEnemy.y - bullet.y;
+                dx = tmpEnemy.settings.x - bullet.settings.x;
+                dy = tmpEnemy.settings.y - bullet.settings.y;
                 distance = Math.sqrt((dx * dx) + (dy * dy));
                 //console.log(distance);
-                if (distance < tmpEnemy.width) {
+                if (distance < tmpEnemy.settings.width) {
                     //playGame = false;
                     destroy(tmpEnemy, bullet);
                     bullets.removeByValue(bullet);
@@ -788,14 +813,14 @@ $(document).ready(function () {
 
             }
         } else {
-            dx = ship.x - bullet.x;
-            dy = ship.y - bullet.y;
+            dx = ship.settings.x - bullet.settings.x;
+            dy = ship.settings.y - bullet.settings.y;
             distance = Math.sqrt((dx * dx) + (dy * dy));
             //console.log(distance);
-            if (distance <= (ship.width * 4) && ship.shield.active) {
+            if (distance <= (ship.settings.width * 4) && ship.shield.active) {
                 bullets.removeByValue(bullet);
             }
-            else if (distance < ship.halfWidth && !ship.shield.active) {
+            else if (distance < ship.settings.halfWidth && !ship.shield.active) {
                 if (!muted) {
                     hitSound.currentTime = 0;
                     hitSound.play();
@@ -817,10 +842,10 @@ $(document).ready(function () {
             powerups.removeByValue(powerup);
             numPowerups--;
         }
-        var dx = ship.x - powerup.x;
-        var dy = ship.y - powerup.y;
+        var dx = ship.settings.x - powerup.x;
+        var dy = ship.settings.y - powerup.y;
         var distance = Math.sqrt((dx * dx) + (dy * dy));
-        if (distance < ship.width) {
+        if (distance < ship.settings.width) {
             powerups.removeByValue(powerup);
             numPowerups--;
             if (!muted) {
@@ -843,12 +868,12 @@ $(document).ready(function () {
                 break;
             case 3:
                 player.superFire.active = true;
-                player.chargeRate = player.defaultChargeRate * 2;
+                player.chargeRate = player.defualtSettings.defaultChargeRate * 2;
                 player.superFire.element.addClass('active');
                 break;
             case 4:
                 player.superSpeed.active = true;
-                player.maxSpeed = player.maxSpeed * 2;
+                player.maxSpeed = player.defualtSettings.maxSpeed * 2;
                 player.superSpeed.element.addClass('active');
                 break;
             case 5:
@@ -897,49 +922,49 @@ $(document).ready(function () {
 
 
     function regen(player) {
-        if (player.energy < 360) {
-            player.energy = player.energy + player.energyRate;
+        if (player.settings.energy < 360) {
+            player.settings.energy = player.settings.energy + player.settings.energyRate;
         }
-        if (player.charge < 200) {
-            player.charge = player.charge + player.chargeRate;
+        if (player.settings.charge < 200) {
+            player.settings.charge = player.settings.charge + player.settings.chargeRate;
         }
         //Charge Powerup
     }
 
     function shoot(player) {
-        if (player.energy > 0 && player.charge == 200) {
-            player.energy = player.energy - 18;
+        if (player.settings.energy > 0 && player.settings.charge == 200) {
+            player.settings.energy = player.settings.energy - 18;
             bullets.push(new Bullet(player));
             if (!muted) {
                 shootSound.currentTime = 0;
                 shootSound.play();
             }
-            player.charge = 0;
-        } else if (player.charge < 200) {
-            player.charge = player.charge + player.chargeRate;
+            player.settings.charge = 0;
+        } else if (player.settings.charge < 200) {
+            player.settings.charge = player.settings.charge + player.settings.chargeRate;
         }
     }
 
     function destroy(player, by) {
-        player.health = player.health - 10;
+        player.settings.health = player.settings.health - 10;
         //console.log(player.health);
-        if (player.health == 0 && player != ship) {
+        if (player.settings.health == 0 && player != ship) {
             if (!muted) {
                 destroySound.currentTime = 0;
                 destroySound.play();
             }
             enemies.removeByValue(player);
-            collisions.push(new Collision(player.x, player.y, by.rotation));
+            collisions.push(new Collision(player.settings.x, player.settings.y, by.settings.rotation));
             score++;
             scoreOut.text(score);
             levelUp();
-        } else if (player.health == 0 && player == ship) {
-            resetPlayer(player);
+        } else if (player.settings.health == 0 && player == ship) {
+            ship.reset();
             if (!muted) {
                 destroySound.currentTime = 0;
                 destroySound.play();
             }
-            collisions.push(new Collision(player.x, player.y, by.rotation));
+            collisions.push(new Collision(player.settings.x, player.settings.y, by.settings.rotation));
             //score--;
             endGame();
         }
