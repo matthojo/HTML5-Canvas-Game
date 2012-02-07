@@ -488,7 +488,7 @@ footer {
 }
 .iconic {
 display: inline-block;
-font-family: 'IconicFill';
+font-family: IconicFill;
 }
 #settings {
 	color: #FFF;
