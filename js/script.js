@@ -91,7 +91,7 @@ $(document).ready(function () {
     //var thrustersSound = $("#thrustersSound").get(0);
 
     // Initilise objects
-    var Star, Bullet, Powerup, Ship, ShipEnemy;
+    var Star, Bullet, Powerup, Ship, ShipEnemy, Collision, Particle;
 
     Star = function (x, y) {
         this.x = x;
@@ -174,6 +174,27 @@ $(document).ready(function () {
         this.flying = false
     };
 
+    Collision = function(x,y, direction){
+        this.x = x;
+        this.y = y;
+        this.particleCount = 10;
+        this.lifetime = 200;
+        this.direction = direction;
+
+    };
+
+    Particle = function (owner) {
+        this.x = owner.x;
+        this.y = owner.y;
+        this.rotation = Math.floor(randomFromTo(owner.direction-20, owner.direction+20));
+        this.vx = 0;
+        this.vy = 0;
+        this.speed = Math.floor(randomFromTo(5, 10));
+        this.size = Math.floor(randomFromTo(2, 4));
+        this.lifetime = owner.lifetime;
+        this.owner = owner;
+    };
+
     stars = new Array();
     numStars = 40;
 
@@ -213,6 +234,9 @@ $(document).ready(function () {
         var y = Math.floor(Math.random() * canvasHeight);
         powerups.push(new Powerup(x, y));
     }
+
+    var collisions = new Array();
+    var particles = new Array();
 
     function draw() {
 
@@ -535,6 +559,30 @@ $(document).ready(function () {
                 console.log(error);
             }
         }
+
+        var collisionLegnth = collisions.length;
+        for (var i = 0; i < collisionLegnth; i++) {
+            var tmpCollision = collisions[i];
+            if (tmpCollision) {
+                if(particles.length < tmpCollision.particleCount) particles.push(new Particle(tmpCollision));
+                for(var i = 0; i < particles.length; i++){
+                    var tmpParticle = particles[i];
+                    context.save();
+                    context.translate(tmpParticle.x, tmpParticle.y);
+                    context.rotate((tmpParticle.rotation) * Math.PI / 180);
+                    context.translate(-tmpParticle.x, -tmpParticle.y);
+                    context.fillStyle = '#FFF';
+                    context.beginPath();
+                    context.fillRect(tmpParticle.x, tmpParticle.y, tmpParticle.size , tmpParticle.size);
+                    context.closePath();
+                    context.fill();
+                    context.restore();
+                    animateParticle(tmpParticle, i);
+                }
+            }
+            animateCollision(tmpCollision);
+        }
+
         ship.flying = false;
     }
 
@@ -663,7 +711,7 @@ $(document).ready(function () {
             }
 
             tmpEnemy.flying = false;
-            if (ship.superSpeed.active && ship.speed == ship.maxSpeed) destroy(tmpEnemy);
+            if (ship.superSpeed.active && ship.speed == ship.maxSpeed) destroy(tmpEnemy, ship);
 
         } else {
             if (tmpEnemy.speed < tmpEnemy.maxSpeed) {
@@ -730,8 +778,9 @@ $(document).ready(function () {
                 //console.log(distance);
                 if (distance < tmpEnemy.width) {
                     //playGame = false;
+                    destroy(tmpEnemy, bullet);
                     bullets.removeByValue(bullet);
-                    destroy(tmpEnemy);
+
                     //console.log("destroyed");
                     //playGame = false;
 
@@ -747,12 +796,12 @@ $(document).ready(function () {
                 bullets.removeByValue(bullet);
             }
             else if (distance < ship.halfWidth && !ship.shield.active) {
-                bullets.removeByValue(bullet);
                 if (!muted) {
                     hitSound.currentTime = 0;
                     hitSound.play();
                 }
-                destroy(ship);
+                destroy(ship, bullet);
+                bullets.removeByValue(bullet);
             }
 
 
@@ -810,6 +859,42 @@ $(document).ready(function () {
         }
     }
 
+    function animateParticle(particle) {
+
+        if (particle.lifetime <= 0) {
+            particles.removeByValue(particle);
+        }
+        else if (particle.lifetime > 0) particle.lifetime = particle.lifetime - 10;
+
+        if (particle.y >= canvasHeight - particle.size) {
+            particles.removeByValue(particle);
+        }
+        if (particle.x >= canvasWidth - particle.size) {
+            particles.removeByValue(particle);
+        }
+        if (particle.y <= 0 + particle.size) {
+            particles.removeByValue(particle);
+        }
+        if (particle.x <= 0 + particle.size) {
+            particles.removeByValue(particle);
+        }
+
+        particle.vy = Math.sin(particle.rotation * Math.PI / 180) * particle.speed;
+        particle.vx = Math.cos(particle.rotation * Math.PI / 180) * particle.speed;
+
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+    }
+    function animateCollision(collision) {
+
+        if (collision.lifetime <= 0) {
+            collisions.removeByValue(collision);
+        }
+        else if (collision.lifetime > 0) collision.lifetime = collision.lifetime - 10;
+        if(collision.particleCount > 0) collision.particleCount--;
+    }
+
 
     function regen(player) {
         if (player.energy < 360) {
@@ -835,7 +920,7 @@ $(document).ready(function () {
         }
     }
 
-    function destroy(player) {
+    function destroy(player, by) {
         player.health = player.health - 10;
         //console.log(player.health);
         if (player.health == 0 && player != ship) {
@@ -844,6 +929,7 @@ $(document).ready(function () {
                 destroySound.play();
             }
             enemies.removeByValue(player);
+            collisions.push(new Collision(player.x, player.y, by.rotation));
             score++;
             scoreOut.text(score);
             levelUp();
@@ -853,6 +939,7 @@ $(document).ready(function () {
                 destroySound.currentTime = 0;
                 destroySound.play();
             }
+            collisions.push(new Collision(player.x, player.y, by.rotation));
             //score--;
             endGame();
         }
@@ -1047,6 +1134,5 @@ $(document).ready(function () {
     startGame();
 
 });
-
 
 
