@@ -9,9 +9,9 @@ $(document).ready(function () {
      */
 
     // stats.js r9 - http://github.com/mrdoob/stats.js
-    var Stats =function(){var h,a,r=0,s=0,i=Date.now(),u=i,t=i,l=0,n=1E3,o=0,e,j,f,b=[[16,16,48],[0,255,255]],m=0,p=1E3,q=0,d,k,g,c=[[16,48,16],[0,255,0]];h=document.createElement("div");h.style.cursor="pointer";h.style.width="80px";h.style.opacity="0.9";h.style.zIndex="10001";h.addEventListener("mousedown",function(a){a.preventDefault();r=(r+1)%2;0==r?(e.style.display="block",d.style.display="none"):(e.style.display="none",d.style.display="block")},!1);e=document.createElement("div");e.style.textAlign=
-        "left";e.style.lineHeight="1.2em";e.style.backgroundColor="rgb("+Math.floor(b[0][0]/2)+","+Math.floor(b[0][1]/2)+","+Math.floor(b[0][2]/2)+")";e.style.padding="0 0 3px 3px";h.appendChild(e);j=document.createElement("div");j.style.fontFamily="Helvetica, Arial, sans-serif";j.style.fontSize="9px";j.style.color="rgb("+b[1][0]+","+b[1][1]+","+b[1][2]+")";j.style.fontWeight="bold";j.innerHTML="FPS";e.appendChild(j);f=document.createElement("div");f.style.position="relative";f.style.width="74px";f.style.height=
-        "30px";f.style.backgroundColor="rgb("+b[1][0]+","+b[1][1]+","+b[1][2]+")";for(e.appendChild(f);74>f.children.length;)a=document.createElement("span"),a.style.width="1px",a.style.height="30px",a.style.cssFloat="left",a.style.backgroundColor="rgb("+b[0][0]+","+b[0][1]+","+b[0][2]+")",f.appendChild(a);d=document.createElement("div");d.style.textAlign="left";d.style.lineHeight="1.2em";d.style.backgroundColor="rgb("+Math.floor(c[0][0]/2)+","+Math.floor(c[0][1]/2)+","+Math.floor(c[0][2]/2)+")";d.style.padding=
+    var Stats =function(){var h,a,r=0,s=0,i=Date.now(),u=i,t=i,l=0,n=1E3,o=0,e,j,f,b=[[16,16,48],[0,255,255]],m=0,p=1E3,q=0,d,k,g,c=[[16,48,16],[0,255,0]];h=document.createElement("div");h.style.cursor="pointer";h.style.width="80px";h.style.opacity="0.9";h.style.zIndex="10001";h.addEventListener("mousedown",function(a){a.preventDefault();r=(r+1)%2;0===r?(e.style.display="block",d.style.display="none"):(e.style.display="none",d.style.display="block")},!1);e=document.createElement("div");e.style.textAlign=
+        "left";e.style.lineHeight="1.2em";e.style.backgroundColor="rgb("+bitwiseRound(b[0][0]/2)+","+bitwiseRound(b[0][1]/2)+","+bitwiseRound(b[0][2]/2)+")";e.style.padding="0 0 3px 3px";h.appendChild(e);j=document.createElement("div");j.style.fontFamily="Helvetica, Arial, sans-serif";j.style.fontSize="9px";j.style.color="rgb("+b[1][0]+","+b[1][1]+","+b[1][2]+")";j.style.fontWeight="bold";j.innerHTML="FPS";e.appendChild(j);f=document.createElement("div");f.style.position="relative";f.style.width="74px";f.style.height=
+        "30px";f.style.backgroundColor="rgb("+b[1][0]+","+b[1][1]+","+b[1][2]+")";for(e.appendChild(f);74>f.children.length;)a=document.createElement("span"),a.style.width="1px",a.style.height="30px",a.style.cssFloat="left",a.style.backgroundColor="rgb("+b[0][0]+","+b[0][1]+","+b[0][2]+")",f.appendChild(a);d=document.createElement("div");d.style.textAlign="left";d.style.lineHeight="1.2em";d.style.backgroundColor="rgb("+bitwiseRound(c[0][0]/2)+","+bitwiseRound(c[0][1]/2)+","+bitwiseRound(c[0][2]/2)+")";d.style.padding=
         "0 0 3px 3px";d.style.display="none";h.appendChild(d);k=document.createElement("div");k.style.fontFamily="Helvetica, Arial, sans-serif";k.style.fontSize="9px";k.style.color="rgb("+c[1][0]+","+c[1][1]+","+c[1][2]+")";k.style.fontWeight="bold";k.innerHTML="MS";d.appendChild(k);g=document.createElement("div");g.style.position="relative";g.style.width="74px";g.style.height="30px";g.style.backgroundColor="rgb("+c[1][0]+","+c[1][1]+","+c[1][2]+")";for(d.appendChild(g);74>g.children.length;)a=document.createElement("span"),
         a.style.width="1px",a.style.height=30*Math.random()+"px",a.style.cssFloat="left",a.style.backgroundColor="rgb("+c[0][0]+","+c[0][1]+","+c[0][2]+")",g.appendChild(a);return{getDomElement:function(){return h},getFps:function(){return l},getFpsMin:function(){return n},getFpsMax:function(){return o},getMs:function(){return m},getMsMin:function(){return p},getMsMax:function(){return q},update:function(){i=Date.now();m=i-u;p=Math.min(p,m);q=Math.max(q,m);k.textContent=m+" MS ("+p+"-"+q+")";var a=Math.min(30,
         30-30*(m/200));g.appendChild(g.firstChild).style.height=a+"px";u=i;s++;if(i>t+1E3)l=Math.round(1E3*s/(i-t)),n=Math.min(n,l),o=Math.max(o,l),j.textContent=l+" FPS ("+n+"-"+o+")",a=Math.min(30,30-30*(l/100)),f.appendChild(f.firstChild).style.height=a+"px",t=i,s=0}}};
@@ -47,8 +47,8 @@ $(document).ready(function () {
     Star = function (x, y) {
         this.x = x;
         this.y = y;
-        this.brightness = Math.floor(Math.random() * 4);
-        this.radius = Math.floor(Math.random() * 4);
+        this.brightness = bitwiseRound(Math.random() * 4);
+        this.radius = bitwiseRound(Math.random() * 4);
     };
     Bullet = function (owner) {
         this.x = owner.x;
@@ -137,51 +137,51 @@ $(document).ready(function () {
     Particle = function (owner) {
         this.x = owner.x;
         this.y = owner.y;
-        this.rotation = Math.floor(randomFromTo(owner.direction-20, owner.direction+20));
+        this.rotation = bitwiseRound(randomFromTo(owner.direction-20, owner.direction+20));
         this.vx = 0;
         this.vy = 0;
-        this.speed = Math.floor(randomFromTo(5, 10));
-        this.size = Math.floor(randomFromTo(2, 4));
+        this.speed = bitwiseRound(randomFromTo(5, 10));
+        this.size = bitwiseRound(randomFromTo(2, 4));
         this.lifetime = owner.lifetime;
         this.owner = owner;
     };
 
-    stars = new Array();
-    numStars = 40;
+    stars = [];
+    numStars = 20;
 
     for (var i = 0; i < numStars; i++) {
-        var x = Math.floor(Math.random() * canvasWidth);
-        var y = Math.floor(Math.random() * canvasHeight);
+        var x = bitwiseRound(Math.random() * canvasWidth);
+        var y = bitwiseRound(Math.random() * canvasHeight);
         stars.push(new Star(x, y))
     }
 
-    enemies = new Array();
+    enemies = [];
     numEnemies = 1;
 
     for (var i = 0; i < numEnemies; i++) {
-        var x = Math.floor(Math.random() * canvasWidth);
-        var y = Math.floor(Math.random() * canvasHeight);
+        var x = bitwiseRound(Math.random() * canvasWidth);
+        var y = bitwiseRound(Math.random() * canvasHeight);
         enemies.push(new ShipEnemy(x, y));
     }
 
     ship = new Ship(150, canvas.height() / 2);
     updateHighScore();
 
-    bullets = new Array();
+    bullets = [];
     numBullets = 0;
 
-    powerups = new Array();
+    powerups = [];
     numPowerups = 1;
     var maxNumPowerups = 2, powerupCharge = 200, powerupChargeRate = 1, powerupChargeMax = 1000;
 
     for (var i = 0; i < numPowerups; i++) {
-        var x = Math.floor(Math.random() * canvasWidth);
-        var y = Math.floor(Math.random() * canvasHeight);
+        var x = bitwiseRound(Math.random() * canvasWidth);
+        var y = bitwiseRound(Math.random() * canvasHeight);
         powerups.push(new Powerup(x, y));
     }
 
-    var collisions = new Array();
-    var particles = new Array();
+    var collisions = [];
+    var particles = [];
 
     function draw() {
 
@@ -189,25 +189,22 @@ $(document).ready(function () {
         var canvasHeight = $(window).get(0).innerHeight - footerHeight;
         canvas.attr("width", canvasWidth);
         canvas.attr("height", canvasHeight);
-	    window.scrollTo(0, 0);
-	    
+        window.scrollTo(0, 0);
+
         if (enemies.length < numEnemies) {
-            var x = Math.floor(Math.random() * canvasWidth);
-            var y = Math.floor(Math.random() * canvasHeight);
+            var x = bitwiseRound(Math.random() * canvasWidth);
+            var y = bitwiseRound(Math.random() * canvasHeight);
             enemies.push(new ShipEnemy(x, y));
         }
 
-        if (powerupCharge == powerupChargeMax) {
-
-            if (numPowerups < maxNumPowerups) {
-                numPowerups++;
-                powerupCharge = 0;
-            }
+        if (powerupCharge === powerupChargeMax && numPowerups < maxNumPowerups) {
+            numPowerups++;
+            powerupCharge = 0;
         }
 
         if (powerups.length < numPowerups) {
-            var x = Math.floor(Math.random() * canvasWidth);
-            var y = Math.floor(Math.random() * canvasHeight);
+            var x = bitwiseRound(Math.random() * canvasWidth);
+            var y = bitwiseRound(Math.random() * canvasHeight);
             powerups.push(new Powerup(x, y));
 
         }
@@ -217,22 +214,20 @@ $(document).ready(function () {
         context.clearRect(0, 0, canvas.width(), canvas.height());
         context.restore();
 
-        if (touchable) {
-            if (touches.length > 0) {
-                var touch = touches[0];
-                if (touch.clientY != ship.y && touch.clientX != ship.x) {
-                    ship.rotation = Math.atan2(
-                        touch.clientY - ship.y,
-                        touch.clientX - ship.x
-                    ) * 180 / Math.PI;
-                }
-                if (touches.length >= 2) {
-                    shoot(ship);
-                } else {
-                    regen(ship);
-                }
-
+        if (touchable && touches.length > 0) {
+            var touch = touches[0];
+            if (touch.clientY != ship.y && touch.clientX != ship.x) {
+                ship.rotation = Math.atan2(
+                    touch.clientY - ship.y,
+                    touch.clientX - ship.x
+                ) * 180 / Math.PI;
             }
+            if (touches.length >= 2) {
+                shoot(ship);
+            } else {
+                regen(ship);
+            }
+
         }
         if (rightKey) {
             ship.rotation += ship.rotationSpeed;
@@ -481,7 +476,6 @@ $(document).ready(function () {
         var bulletsLength = bullets.length;
         for (var i = 0; i < bulletsLength; i++) {
             var tmpBullet = bullets[i];
-            try {
                 if (tmpBullet) {
                     context.save();
                     context.translate(tmpBullet.x, tmpBullet.y);
@@ -495,17 +489,14 @@ $(document).ready(function () {
                     context.restore();
                     animateBullet(tmpBullet, i);
                 }
-            } catch (error) {
-                console.log(error);
-            }
         }
 
         var collisionLegnth = collisions.length;
         for (var i = 0; i < collisionLegnth; i++) {
             var tmpCollision = collisions[i];
             if (tmpCollision) {
-                if(particles.length < tmpCollision.particleCount) particles.push(new Particle(tmpCollision));
-                for(var i = 0; i < particles.length; i++){
+                if (particles.length < tmpCollision.particleCount) particles.push(new Particle(tmpCollision));
+                for (var i = 0; i < particles.length; i++) {
                     var tmpParticle = particles[i];
                     context.save();
                     context.translate(tmpParticle.x, tmpParticle.y);
@@ -513,11 +504,11 @@ $(document).ready(function () {
                     context.translate(-tmpParticle.x, -tmpParticle.y);
                     context.fillStyle = '#FFF';
                     context.beginPath();
-                    context.fillRect(tmpParticle.x, tmpParticle.y, tmpParticle.size , tmpParticle.size);
+                    context.fillRect(tmpParticle.x, tmpParticle.y, tmpParticle.size, tmpParticle.size);
                     context.closePath();
                     context.fill();
                     context.restore();
-                    animateParticle(tmpParticle, i);
+                    animateParticle(tmpParticle);
                 }
             }
             animateCollision(tmpCollision);
@@ -617,7 +608,7 @@ $(document).ready(function () {
                     dxTwo = tmpEnemyTwo.x - tmpEnemy.x;
                     dyTwo = tmpEnemyTwo.y - tmpEnemy.y;
                     distanceTwo = Math.sqrt((dxTwo * dxTwo) + (dyTwo * dyTwo));
-                    var randomOption = Math.floor(Math.random() * 10);
+                    var randomOption = bitwiseRound(Math.random() * 10);
                     if (distanceTwo < tmpEnemyTwo.width) {
                         tmpEnemy.x -= randomOption;
                         tmpEnemy.y -= randomOption;
@@ -652,7 +643,7 @@ $(document).ready(function () {
             }
 
             tmpEnemy.flying = false;
-            if (ship.superSpeed.active && ship.speed == ship.maxSpeed) destroy(tmpEnemy, ship);
+            if (ship.superSpeed.active && ship.speed === ship.maxSpeed) destroy(tmpEnemy, ship);
 
         } else {
             if (tmpEnemy.speed < tmpEnemy.maxSpeed) {
@@ -709,7 +700,7 @@ $(document).ready(function () {
         bullet.y += bullet.vy;
 
         var dx, dy, distance;
-        if (bullet.owner == ship) {
+        if (bullet.owner === ship) {
             for (i = 0; i < enemies.length; i++) {
                 var tmpEnemy = enemies[i];
 
@@ -841,7 +832,7 @@ $(document).ready(function () {
     }
 
     function shoot(player) {
-        if (player.energy > 0 && player.charge == 200) {
+        if (player.energy > 0 && player.charge === 200) {
             player.energy = player.energy - 18;
             bullets.push(new Bullet(player));
             if (!muted) {
@@ -856,7 +847,7 @@ $(document).ready(function () {
 
     function destroy(player, by) {
         player.health = player.health - 10;
-        if (player.health == 0 && player != ship) {
+        if (player.health === 0 && player != ship) {
             if (!muted) {
                 destroySound.currentTime = 0;
                 destroySound.play();
@@ -866,7 +857,7 @@ $(document).ready(function () {
             score++;
             scoreOut.html(score);
             levelUp();
-        } else if (player.health == 0 && player == ship) {
+        } else if (player.health === 0 && player === ship) {
             resetPlayer(player);
             if (!muted) {
                 destroySound.currentTime = 0;
@@ -957,22 +948,22 @@ $(document).ready(function () {
 
     function onKeyDown(evt) {
         evt.preventDefault();
-        if (evt.keyCode == 39) rightKey = true;
-        else if (evt.keyCode == 37) leftKey = true;
-        if (evt.keyCode == 38) upKey = true;
-        else if (evt.keyCode == 40) downKey = true;
-        if (evt.keyCode == 32) space = true;
-        if(evt.keyCode == 112) debugMode();
-        if(evt.keyCode == 80) if(!pause)pause=true;
+        if (evt.keyCode === 39) rightKey = true;
+        else if (evt.keyCode === 37) leftKey = true;
+        if (evt.keyCode === 38) upKey = true;
+        else if (evt.keyCode === 40) downKey = true;
+        if (evt.keyCode === 32) space = true;
+        if(evt.keyCode === 112) debugMode();
+        if(evt.keyCode === 80) if(!pause)pause=true;
 
     }
 
     function onKeyUp(evt) {
-        if (evt.keyCode == 39) rightKey = false;
-        else if (evt.keyCode == 37) leftKey = false;
-        if (evt.keyCode == 38) upKey = false;
-        else if (evt.keyCode == 40) downKey = false;
-        if (evt.keyCode == 32) space = false;
+        if (evt.keyCode === 39) rightKey = false;
+        else if (evt.keyCode === 37) leftKey = false;
+        if (evt.keyCode === 38) upKey = false;
+        else if (evt.keyCode === 40) downKey = false;
+        if (evt.keyCode === 32) space = false;
     }
 
     function onTouchStart(e) {
@@ -1031,7 +1022,11 @@ $(document).ready(function () {
 
         }
 	}
-        
+
+    function bitwiseRound(number){
+        var rounded = ~~ (0.5 + number);
+        return rounded;
+    }
 
     $('#toggleSound').toggle(function () {
         muted = true;
@@ -1061,7 +1056,7 @@ $(document).ready(function () {
     }));
 
     function randomFromTo(from, to) {
-        return Math.floor(Math.random() * (to - from + 1) + from);
+        return bitwiseRound(Math.random() * (to - from + 1) + from);
     }
 
     $(document).ready(function () {
@@ -1081,6 +1076,7 @@ $(document).ready(function () {
     });
 
     $(window).resize(draw);
+
     var listElements, step, archHeight, circleCenterX, circleCenterY, radius;
     listElements = $('#hud ul li').get();
     step = (2 * Math.PI) / listElements.length;
