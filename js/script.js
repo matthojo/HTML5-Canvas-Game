@@ -474,44 +474,48 @@ $(document).ready(function () {
         context.restore();
 
         var bulletsLength = bullets.length;
-        for (var i = 0; i < bulletsLength; i++) {
-            var tmpBullet = bullets[i];
-                if (tmpBullet) {
-                    context.save();
-                    context.translate(tmpBullet.x, tmpBullet.y);
-                    context.rotate((tmpBullet.rotation) * Math.PI / 180);
-                    context.translate(-tmpBullet.x, -tmpBullet.y);
-                    context.fillStyle = '#FFF';
-                    context.beginPath();
-                    context.fillRect(tmpBullet.x, tmpBullet.y, tmpBullet.size * 4, tmpBullet.size);
-                    context.closePath();
-                    context.fill();
-                    context.restore();
-                    animateBullet(tmpBullet, i);
-                }
+        if(bulletsLength > 0){
+            for (var i = 0; i < bulletsLength; i++) {
+                var tmpBullet = bullets[i];
+                    if (tmpBullet) {
+                        context.save();
+                        context.translate(tmpBullet.x, tmpBullet.y);
+                        context.rotate((tmpBullet.rotation) * Math.PI / 180);
+                        context.translate(-tmpBullet.x, -tmpBullet.y);
+                        context.fillStyle = '#FFF';
+                        context.beginPath();
+                        context.fillRect(tmpBullet.x, tmpBullet.y, tmpBullet.size * 4, tmpBullet.size);
+                        context.closePath();
+                        context.fill();
+                        context.restore();
+                        animateBullet(tmpBullet, i);
+                    }
+            }
         }
 
-        var collisionLegnth = collisions.length;
-        for (var i = 0; i < collisionLegnth; i++) {
-            var tmpCollision = collisions[i];
-            if (tmpCollision) {
-                if (particles.length < tmpCollision.particleCount) particles.push(new Particle(tmpCollision));
-                for (var i = 0; i < particles.length; i++) {
-                    var tmpParticle = particles[i];
-                    context.save();
-                    context.translate(tmpParticle.x, tmpParticle.y);
-                    context.rotate((tmpParticle.rotation) * Math.PI / 180);
-                    context.translate(-tmpParticle.x, -tmpParticle.y);
-                    context.fillStyle = '#FFF';
-                    context.beginPath();
-                    context.fillRect(tmpParticle.x, tmpParticle.y, tmpParticle.size, tmpParticle.size);
-                    context.closePath();
-                    context.fill();
-                    context.restore();
-                    animateParticle(tmpParticle);
+        var collisionLength = collisions.length;
+        if(collisionLength > 0){
+            for (var i = 0; i < collisionLength; i++) {
+                var tmpCollision = collisions[i];
+                if (tmpCollision) {
+                    if (particles.length < tmpCollision.particleCount) particles.push(new Particle(tmpCollision));
+                    for (var i = 0; i < particles.length; i++) {
+                        var tmpParticle = particles[i];
+                        context.save();
+                        context.translate(tmpParticle.x, tmpParticle.y);
+                        context.rotate((tmpParticle.rotation) * Math.PI / 180);
+                        context.translate(-tmpParticle.x, -tmpParticle.y);
+                        context.fillStyle = '#FFF';
+                        context.beginPath();
+                        context.fillRect(tmpParticle.x, tmpParticle.y, tmpParticle.size, tmpParticle.size);
+                        context.closePath();
+                        context.fill();
+                        context.restore();
+                        animateParticle(tmpParticle);
+                    }
                 }
+                animateCollision(tmpCollision);
             }
-            animateCollision(tmpCollision);
         }
 
         ship.flying = false;
