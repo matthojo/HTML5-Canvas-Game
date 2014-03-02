@@ -412,6 +412,9 @@ $(document).ready(function () {
             context.arc(tmpStar.x, tmpStar.y, tmpStar.radius, 0, Math.PI * 2, true);
             context.closePath();
             context.fill();
+            if(randomFromTo(1,starsLength) == i){
+               tmpStar.brightness = bitwiseRound(Math.random() * 4);
+            }
         }
         context.restore();
 
